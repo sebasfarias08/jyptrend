@@ -4,165 +4,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Catálogo de Productos</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 1rem;
-      background: #f8f8f8;
-    }
-
-    h1 {
-      text-align: center;
-    }
-
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    select,
-    input[type="text"] {
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1rem;
-    }
-
-    .card {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .card img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 6px;
-    }
-
-    .card h2 {
-      font-size: 1.1rem;
-      margin: 0.5rem 0;
-    }
-
-    .card p {
-      margin: 0.3rem 0;
-    }
-  </style>
+  <title>Catálogo</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+  <header>
+    <h1>Catálogo</h1>
+    <div class="filtros">
+      <select id="filtro-categoria">
+        <option value="">Todas</option>
+        <option value="perfume">Perfume</option>
+        <option value="botellas">Botellas</option>
+        <option value="vaper">Vaper</option>
+      </select>
+      <input type="text" id="busqueda" placeholder="Buscar por nombre..." />
+      <label>
+        <input type="checkbox" id="filtro-oferta" />
+        Solo ofertas
+      </label>
+    </div>
+  </header>
 
-  <h1>Catálogo de Productos</h1>
+  <main>
+    <div id="catalogo-container" class="grid-container"></div>
+  </main>
 
-  <div class="filters">
-    <select id="categoryFilter">
-      <option value="">Todas</option>
-      <option value="Perfume">Perfume</option>
-      <option value="Botellas">Botellas</option>
-      <option value="Vaper">Vaper</option>
-    </select>
-
-    <select id="stockFilter">
-      <option value="">Todo el stock</option>
-      <option value="in">En stock</option>
-      <option value="out">Sin stock</option>
-    </select>
-
-    <input type="text" id="searchInput" placeholder="Buscar por nombre..." />
-  </div>
-
-  <div id="productGrid" class="grid"></div>
-
-  <script>
-    const API_URL = "YOUR_SCRIPT_URL_HERE";
-
-    async function fetchProducts() {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      return data;
-    }
-
-    function renderProducts(products) {
-      const grid = document.getElementById("productGrid");
-      grid.innerHTML = "";
-
-      if (products.length === 0) {
-        grid.innerHTML = "<p>No se encontraron productos.</p>";
-        return;
-      }
-
-      products.forEach(product => {
-        const card = document.createElement("div");
-        card.className = "card";
-
-        if (product.imagen) {
-          const img = document.createElement("img");
-          img.src = product.imagen;
-          card.appendChild(img);
-        }
-
-        const name = document.createElement("h2");
-        name.textContent = product.nombre;
-        card.appendChild(name);
-
-        const price = document.createElement("p");
-        price.textContent = `Precio: $${product.precio}`;
-        card.appendChild(price);
-
-        const stock = document.createElement("p");
-        stock.textContent = `Stock: ${product.stock}`;
-        card.appendChild(stock);
-
-        grid.appendChild(card);
-      });
-    }
-
-    function applyFilters(products) {
-      const category = document.getElementById("categoryFilter").value.toLowerCase();
-      const stockFilter = document.getElementById("stockFilter").value;
-      const search = document.getElementById("searchInput").value.toLowerCase();
-
-      return products.filter(p => {
-        const matchCategory = category ? p.categoria.toLowerCase() === category : true;
-        const matchStock = stockFilter === "in" ? p.stock > 0 :
-          stockFilter === "out" ? p.stock <= 0 : true;
-        const matchSearch = p.nombre.toLowerCase().includes(search);
-        return matchCategory && matchStock && matchSearch;
-      });
-    }
-
-    async function init() {
-      const products = await fetchProducts();
-
-      const updateDisplay = () => {
-        const filtered = applyFilters(products);
-        renderProducts(filtered);
-      };
-
-      document.getElementById("categoryFilter").addEventListener("change", updateDisplay);
-      document.getElementById("stockFilter").addEventListener("change", updateDisplay);
-      document.getElementById("searchInput").addEventListener("input", updateDisplay);
-
-      updateDisplay();
-    }
-
-    init();
-  </script>
-
+  <script src="script.js"></script>
 </body>
 
 </html>
