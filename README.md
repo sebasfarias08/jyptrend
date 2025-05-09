@@ -24,3 +24,5 @@ Lo podés redirigir a tu sitio en GitHub Pages.
 3-Tu JS hace fetch('https://script.google.com/macros/s/AKfycb.../exec').
 4-Apps Script responde con los datos desde Sheets.
 5-Se renderiza la página con la información.
+
+https://sebasfarias08.github.io/jyptrend

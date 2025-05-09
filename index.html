@@ -4,36 +4,161 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JyP Trend</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Catálogo de Productos</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f8f8f8;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    select {
+      padding: 0.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      margin: 0.5rem 0;
+    }
+
+    .card p {
+      margin: 0.3rem 0;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Registrar Venta</h1>
 
-  <form id="ventaForm">
-    <input type="text" id="cliente" placeholder="Cliente" required />
-    <input type="text" id="producto" placeholder="Producto" required />
-    <input type="number" id="cantidad" placeholder="Cantidad" required />
-    <input type="number" id="precio" placeholder="Precio unitario" required />
-    <button type="submit">Guardar Venta</button>
-  </form>
+  <h1>Catálogo de Productos</h1>
 
-  <h2>Ventas registradas</h2>
-  <table id="ventasTable">
-    <thead>
-      <tr>
-        <th>Cliente</th>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Precio</th>
-        <th>Fecha</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="filters">
+    <select id="categoryFilter">
+      <option value="">Todas las categorías</option>
+    </select>
+    <select id="stockFilter">
+      <option value="">Todo el stock</option>
+      <option value="in">En stock</option>
+      <option value="out">Sin stock</option>
+    </select>
+  </div>
 
-  <script src="script.js"></script>
+  <div id="productGrid" class="grid"></div>
+
+  <script>
+    const API_URL = "YOUR_SCRIPT_URL_HERE";
+
+    async function fetchProducts() {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      return data;
+    }
+
+    function renderProducts(products) {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = "";
+
+      products.forEach(product => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        if (product.imagen) {
+          const img = document.createElement("img");
+          img.src = product.imagen;
+          card.appendChild(img);
+        }
+
+        const name = document.createElement("h2");
+        name.textContent = product.nombre;
+        card.appendChild(name);
+
+        const price = document.createElement("p");
+        price.textContent = `Precio: $${product.precio}`;
+        card.appendChild(price);
+
+        const stock = document.createElement("p");
+        stock.textContent = `Stock: ${product.stock}`;
+        card.appendChild(stock);
+
+        grid.appendChild(card);
+      });
+    }
+
+    function applyFilters(products) {
+      const category = document.getElementById("categoryFilter").value;
+      const stockFilter = document.getElementById("stockFilter").value;
+
+      return products.filter(p => {
+        const matchCategory = category ? p.categoria === category : true;
+        const matchStock = stockFilter === "in" ? p.stock > 0 :
+          stockFilter === "out" ? p.stock <= 0 : true;
+        return matchCategory && matchStock;
+      });
+    }
+
+    function populateCategoryFilter(products) {
+      const select = document.getElementById("categoryFilter");
+      const categories = [...new Set(products.map(p => p.categoria))].sort();
+
+      categories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+    }
+
+    async function init() {
+      const products = await fetchProducts();
+      populateCategoryFilter(products);
+
+      const updateDisplay = () => {
+        const filtered = applyFilters(products);
+        renderProducts(filtered);
+      };
+
+      document.getElementById("categoryFilter").addEventListener("change", updateDisplay);
+      document.getElementById("stockFilter").addEventListener("change", updateDisplay);
+
+      updateDisplay();
+    }
+
+    init();
+  </script>
+
 </body>
 
 </html>
