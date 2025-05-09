@@ -12,9 +12,9 @@ function construirURL() {
 
     const params = new URLSearchParams();
 
-    if (nombre) return `${BASE_URL}?nombre=${encodeURIComponent(nombre)}`;
-    if (categoria) return `${BASE_URL}?categoria=${encodeURIComponent(categoria)}`;
-    if (soloOferta) params.append('oferta', 'si');
+    if (nombre) params.append('nombre', nombre);
+    if (categoria) params.append('categoria', categoria);
+    if (soloOferta) params.append('oferta', 'si');    
 
     return `${BASE_URL}?${params.toString()}`;
 }
@@ -35,15 +35,15 @@ function cargarProductos() {
                 const card = document.createElement('div');
                 card.className = 'producto-card';
                 card.innerHTML = `
-          <img src="${p.Image}" alt="${p.Nombre}" />
-          <h3>${p.Nombre}</h3>
-          <p>${p.Descripcion}</p>
-          <p><strong>Marca:</strong> ${p.Marca}</p>
-          <p><strong>Tamaño:</strong> ${p['Tamaño/Volumen']}</p>
-          <p><strong>Precio:</strong> $${p['Lista x Unidad']}</p>
-          <p><strong>Stock:</strong> ${p.STOCK}</p>
-          ${p.Oferta ? `<p class="oferta">🔥 En oferta</p>` : ''}
-        `;
+                    < img src="${p.imagen}" alt = "${p.nombre}" />
+                    <h3>${p.nombre}</h3>
+                    <p>${p.descripcion}</p>
+                    <p><strong>Marca:</strong> ${p.marca}</p>
+                    <p><strong>Tamaño:</strong> ${p.tamano}</p>
+                    <p><strong>Precio:</strong> $${p.listaUnidad}</p>
+                    <p><strong>Stock:</strong> ${p.stock}</p>
+                    ${ p.oferta === "Si" ? `<p class="oferta">🔥 En oferta</p>` : '' }
+                `;
                 catalogoContainer.appendChild(card);
             });
         })
