@@ -4,6 +4,10 @@ const catalogoContainer = document.getElementById('catalogo-container');
 const filtroCategoria = document.getElementById('filtro-categoria');
 const busquedaInput = document.getElementById('busqueda');
 const filtroOferta = document.getElementById('filtro-oferta');
+let productos = [];
+let productosMostrados = 0;
+const productosPorPagina = 6;
+
 
 function construirURL() {
     const categoria = filtroCategoria.value;
@@ -19,38 +23,49 @@ function construirURL() {
     return `${BASE_URL}?${params.toString()}`;
 }
 
+
 function cargarProductos() {
     const url = construirURL();
     fetch(url)
         .then(res => res.json())
         .then(data => {
+            productos = data;
+            productosMostrados = 0;
             catalogoContainer.innerHTML = '';
-
-            if (data.length === 0) {
-                catalogoContainer.innerHTML = '<p>No se encontraron productos.</p>';
-                return;
-            }
-
-            data.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'producto-card';
-                card.innerHTML = `
-                    < img src="${p.imagen}" alt = "${p.nombre}" />
-                    <h3>${p.nombre}</h3>
-                    <p>${p.descripcion}</p>
-                    <p><strong>Marca:</strong> ${p.marca}</p>
-                    <p><strong>Tamaño:</strong> ${p.tamano}</p>
-                    <p><strong>Precio:</strong> $${p.listaUnidad}</p>
-                    <p><strong>Stock:</strong> ${p.stock}</p>
-                    ${p.oferta === "Si" ? `<p class="oferta">🔥 En oferta</p>` : ''}
-                `;
-                catalogoContainer.appendChild(card);
-            });
+            mostrarSiguienteLote();
         })
         .catch(error => {
             catalogoContainer.innerHTML = '<p>Error al cargar productos.</p>';
             console.error(error);
         });
+}
+
+function mostrarSiguienteLote() {
+    const lote = productos.slice(productosMostrados, productosMostrados + productosPorPagina);
+    lote.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'producto-card';
+        card.innerHTML = `
+            <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" />
+            <h3>${p.nombre}</h3>
+            <p>${p.descripcion}</p>
+            <p><strong>Marca:</strong> ${p.marca}</p>
+            <p><strong>Tamaño:</strong> ${p.tamano}</p>
+            <p><strong>Precio:</strong> $${p.listaUnidad}</p>
+            <p><strong>Stock:</strong> ${p.stock}</p>
+            ${p.oferta === "Si" ? `<p class="oferta">🔥 En oferta</p>` : ''}
+        `;
+        catalogoContainer.appendChild(card);
+    });
+
+    productosMostrados += lote.length;
+
+    const boton = document.getElementById('loadMoreBtn');
+    if (productosMostrados >= productos.length) {
+        boton.style.display = 'none';
+    } else {
+        boton.style.display = 'block';
+    }
 }
 
 filtroCategoria.addEventListener('change', cargarProductos);
@@ -65,5 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
     filtroCategoria.addEventListener('change', cargarProductos);
     busquedaInput.addEventListener('input', cargarProductos);
     filtroOferta.addEventListener('change', cargarProductos);
-    cargarProductos(); // Llama a la función inicialmente para cargar todos los productos
+    document.getElementById('loadMoreBtn').addEventListener('click', mostrarSiguienteLote); // 👈 esta línea nueva
+    cargarProductos(); // Llama a la función inicialmente para cargar productos
 });
