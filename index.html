@@ -9,9 +9,26 @@
 </head>
 
 <body>
+  <!-- Header -->
   <header>
-    <h1>Catálogo</h1>
-    <div class="filtros">
+    <div class="header-container">
+      <img src="https://drive.google.com/uc?export=view&id=1EWL7ehhBv6SLehXbfcTqbVUi2tOMmtb2" alt="Logo" height="50">
+      <span class="header-title">J&P Trend | Tu mejor Opción</span>
+    </div>
+  </header>
+
+  <!-- Ticker -->
+  <div class="ticker">
+    <div class="ticker-text">10% de descuento pagando en efectivo · Envíos a todo el país · Cuotas sin interés · Retiro
+      en oficinas sin costo</div>
+  </div>
+
+  <!-- Main Catalog Section -->
+  <div class="main">
+    <h1>Catálogo Productos</h1>
+
+    <!-- Filtros -->
+    <div class="filters">
       <select id="filtro-categoria">
         <option value="">Todas</option>
         <option value="perfume">Perfume</option>
@@ -24,13 +41,29 @@
         Solo ofertas
       </label>
     </div>
-  </header>
 
-  <main>
-    <div id="catalogo-container" class="grid-container"></div>
-  </main>
+    <!-- Catalog -->
+    <div class="catalog" id="catalogo-container">Cargando productos...</div>
+
+    <!-- Load More Button -->
+    <button id="loadMoreBtn" style="display:none; margin: 20px auto; display: block;">Cargar más</button>
+  </div>
+
+  <!-- WhatsApp Button -->
+  <a href="https://wa.me/5491137923752" class="whatsapp-float" target="_blank" title="Contactanos por WhatsApp">
+    <img src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="whatsapp--v1" width="48" height="48" />
+  </a>
+
+  <!-- Modal -->
+  <div id="productModal">
+    <div class="modal-box">
+      <span id="closeModal" class="modal-close">&times;</span>
+      <div id="modalContent"></div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
+
 </body>
 
 </html>

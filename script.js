@@ -14,7 +14,7 @@ function construirURL() {
 
     if (nombre) params.append('nombre', nombre);
     if (categoria) params.append('categoria', categoria);
-    if (soloOferta) params.append('oferta', 'si');    
+    if (soloOferta) params.append('oferta', 'si');
 
     return `${BASE_URL}?${params.toString()}`;
 }
@@ -42,7 +42,7 @@ function cargarProductos() {
                     <p><strong>Tamaño:</strong> ${p.tamano}</p>
                     <p><strong>Precio:</strong> $${p.listaUnidad}</p>
                     <p><strong>Stock:</strong> ${p.stock}</p>
-                    ${ p.oferta === "Si" ? `<p class="oferta">🔥 En oferta</p>` : '' }
+                    ${p.oferta === "Si" ? `<p class="oferta">🔥 En oferta</p>` : ''}
                 `;
                 catalogoContainer.appendChild(card);
             });
