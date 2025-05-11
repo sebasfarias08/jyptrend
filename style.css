@@ -36,6 +36,8 @@ header {
 
 .logo {
     height: 40px;
+    max-width: 120px; /* o el valor que consideres adecuado */
+    object-fit: contain;
 }
 
 .header-title {
