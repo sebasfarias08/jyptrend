@@ -13,6 +13,15 @@ body {
 }
 
 /* Header */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 header {
     background-color: #333;
     color: #fff;
@@ -28,6 +37,36 @@ header {
 .header-title {
     font-size: 24px;
     font-weight: bold;
+    color: #000000;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 8px 12px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 9999px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 6px;
 }
 
 /* Ticker */
@@ -39,9 +78,9 @@ header {
 }
 
 .ticker-text {
-    display: inline-block;
-    padding-left: 100%;
+    display: flex;
     animation: scroll-left 20s linear infinite;
+    will-change: transform;
 }
 
 /* Main Content */
