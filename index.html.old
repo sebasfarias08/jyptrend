@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>J&P Trend | Tu mejor Opcion</title>
+  <link rel="stylesheet" href="style.css" />
+  
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="sticky-header">
+    <div class="header-container">
+      <img src="https://raw.githubusercontent.com/sebasfarias08/jyptrend/main/imagen/JyPLogo.png" alt="Logo" class="logo">
+      <span class="header-title">J&P Trend | Tu mejor Opción</span>
+    </div>
+  </header>
+
+
+  <div class="search-container">
+    <input type="text" placeholder="¿Qué estás buscando?" class="search-input" />
+    <button class="search-button" aria-label="Buscar">
+    </button>
+  </div>
+
+  <!-- Ticker -->
+  <div class="ticker">
+    <div class="ticker-text">
+      <span>10% de descuento pagando en efectivo · Envíos a todo el país · Cuotas · Retiro en oficinas sin costo · </span>
+      <span>10% de descuento pagando en efectivo · Envíos a todo el país · Cuotas · Retiro en oficinas sin costo · </span>
+    </div>
+  </div>
+
+  <!-- Main Catalog Section -->
+  <div class="main">
+    <h1>Catálogo Productos</h1>
+
+    <!-- Filtros -->
+    <div class="filters">
+      <select id="filtro-categoria">
+        <option value="">Todas</option>
+        <option value="perfume">Perfume</option>
+        <option value="botellas">Botellas</option>
+        <option value="vaper">Vaper</option>
+      </select>
+    </div>
+
+    <!-- Catalog -->
+    <div class="catalog" id="catalogo-container">Cargando productos...</div>
+
+    <!-- Load More Button -->
+    <button id="loadMoreBtn" style="display:none; margin: 20px auto; display: block;">Cargar más</button>
+  </div>
+
+  <!-- WhatsApp Button -->
+  <a href="https://wa.me/5491137923752" class="whatsapp-float" target="_blank" title="Contactanos por WhatsApp">
+    <img src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="whatsapp--v1" width="48" height="48" />
+  </a>
+
+  <!-- Modal -->
+  <div id="productModal">
+    <div class="modal-box">
+      <span id="closeModal" class="modal-close">&times;</span>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</body>
+
+</html>
