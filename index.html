@@ -99,12 +99,19 @@
       });
     };
 
-    // Cargar catálogo y configurar botones
-    fetch(url)
+    // Cargar primeros 10 productos
+    fetch(`${urlBase}?start=0&limit=10`)
       .then(res => res.json())
       .then(data => {
         catalogoCompleto = data;
         renderCatalogo("Todos");
+
+        // Luego cargar el resto en segundo plano
+        fetch(urlBase)
+          .then(res => res.json())
+          .then(dataCompleta => {
+            catalogoCompleto = dataCompleta;
+          });
       });
 
     // Eventos para filtros
