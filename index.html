@@ -44,14 +44,14 @@
     <!-- Filtros -->
     <div class="sticky top-0 z-20 bg-white shadow-md flex items-center justify-center py-2 md:py-8 flex-wrap">
       <div class="w-full max-w-xs mx-auto flex justify-center flex-wrap gap-1 px-2" id="filtros">
-        <button data-filter="Todos"
-          class="filtro-btn active text-blue-700 hover:text-white border border-blue-600 bg-white hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Todos</button>
         <button data-filter="Perfume"
           class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Perfume</button>
         <button data-filter="Botellas"
           class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Botellas</button>
         <button data-filter="Vaper"
           class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Vaper</button>
+        <button data-filter="Todos"
+          class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Todos</button>
       </div>
     </div>
     <!-- Banner animado -->
@@ -75,9 +75,17 @@
       const contenedor = document.getElementById("catalogo");
       contenedor.innerHTML = "";
 
-      const productos = categoria === "Todos"
+      let productos = categoria === "Todos"
         ? catalogoCompleto
         : catalogoCompleto.filter(p => (p.categoria || "").toLowerCase() === categoria.toLowerCase());
+
+      // Ordenar: disponibles primero, luego alfabéticamente por nombre
+      productos.sort((a, b) => {
+        const disponibleA = a.stock > 0 ? 0 : 1;
+        const disponibleB = b.stock > 0 ? 0 : 1;
+        if (disponibleA !== disponibleB) return disponibleA - disponibleB;
+        return a.nombre.localeCompare(b.nombre);
+      });
 
       productos.forEach(item => {
         const disponible = item.stock > 0;
@@ -99,22 +107,24 @@
       });
     };
 
-    // Cargar primeros 10 productos
-    fetch(`${url}?start=0&limit=10`)
+    // Cargar primeros 6 productos (filtro inicial: "Perfume")
+    fetch(`${url}?start=0&limit=6`)
       .then(res => res.json())
       .then(data => {
         catalogoCompleto = data;
-        renderCatalogo("Todos");
+        renderCatalogo("Perfume");
 
-        // Luego cargar el resto en segundo plano
+        // Cargar el catálogo completo en segundo plano
         fetch(url)
           .then(res => res.json())
           .then(dataCompleta => {
             catalogoCompleto = dataCompleta;
-          });
-      });
+          })
+          .catch(err => console.error("Error cargando catálogo completo:", err));
+      })
+      .catch(err => console.error("Error cargando los primeros productos:", err));
 
-    // Eventos para filtros
+    // Filtros
     document.getElementById("filtros").addEventListener("click", (e) => {
       if (e.target.classList.contains("filtro-btn")) {
         document.querySelectorAll(".filtro-btn").forEach(btn => {
@@ -126,12 +136,14 @@
         renderCatalogo(e.target.dataset.filter);
       }
     });
+
+    // Menú móvil
     const toggleBtn = document.getElementById('menu-toggle');
     const menu = document.getElementById('mobile-menu');
-
     toggleBtn.addEventListener('click', () => {
       menu.classList.toggle('hidden');
     });
+
   </script>
   <!-- Whatsapp Boton -->
   <a href="https://wa.me/5491137923752"
