@@ -4,72 +4,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>J&P Trend | Tu mejor Opcion</title>
-  <link rel="stylesheet" href="style.css" />
-  
+  <title>Catálogo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-  <!-- Header -->
-  <header class="sticky-header">
-    <div class="header-container">
-      <img src="https://raw.githubusercontent.com/sebasfarias08/jyptrend/main/imagen/JyPLogo.png" alt="Logo" class="logo">
-      <span class="header-title">J&P Trend | Tu mejor Opción</span>
-    </div>
-  </header>
-
-
-  <div class="search-container">
-    <input type="text" placeholder="¿Qué estás buscando?" class="search-input" />
-    <button class="search-button" aria-label="Buscar">
-    </button>
-  </div>
-
-  <!-- Ticker -->
-  <div class="ticker">
-    <div class="ticker-text">
-      <span>10% de descuento pagando en efectivo · Envíos a todo el país · Cuotas · Retiro en oficinas sin costo · </span>
-      <span>10% de descuento pagando en efectivo · Envíos a todo el país · Cuotas · Retiro en oficinas sin costo · </span>
+<body class="bg-gray-100 p-4">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-center">Catálogo de Productos</h1>
+    <div id="catalogo" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Productos cargados desde JS -->
     </div>
   </div>
 
-  <!-- Main Catalog Section -->
-  <div class="main">
-    <h1>Catálogo Productos</h1>
+  <script>
+    const url = "https://script.google.com/macros/s/AKfycbxQoPVXwdqPjdb6cUCBCVFW5V-fi-fkQtfn0ZM0_79w636TzzPAkDwaiRsBoehTutdz3g/exec";
 
-    <!-- Filtros -->
-    <div class="filters">
-      <select id="filtro-categoria">
-        <option value="">Todas</option>
-        <option value="perfume">Perfume</option>
-        <option value="botellas">Botellas</option>
-        <option value="vaper">Vaper</option>
-      </select>
-    </div>
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("catalogo");
 
-    <!-- Catalog -->
-    <div class="catalog" id="catalogo-container">Cargando productos...</div>
+        data.forEach(item => {
+          const available = item.stock > 0;
+          const statusText = available ? "Disponible" : "No disponible";
+          const statusColor = available ? "text-green-600" : "text-gray-500";
 
-    <!-- Load More Button -->
-    <button id="loadMoreBtn" style="display:none; margin: 20px auto; display: block;">Cargar más</button>
-  </div>
+          const card = document.createElement("div");
+          card.className = "bg-white rounded-lg shadow-md overflow-hidden";
 
-  <!-- WhatsApp Button -->
-  <a href="https://wa.me/5491137923752" class="whatsapp-float" target="_blank" title="Contactanos por WhatsApp">
-    <img src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="whatsapp--v1" width="48" height="48" />
-  </a>
+          card.innerHTML = `
+            <img src="${item.imagen}" alt="${item.nombre}" class="w-full h-48 object-cover">
+            <div class="p-4">
+              <h2 class="text-lg font-semibold">${item.nombre}</h2>
+              <p class="text-sm text-gray-500">${item.marca} - ${item.tamano}</p>
+              <p class="mt-2 text-blue-600 font-bold">$${item.listaUnidad.toLocaleString("es-AR")}</p>
+              <p class="mt-1 text-sm font-medium ${statusColor}">${statusText}</p>
+            </div>
+          `;
 
-  <!-- Modal -->
-  <div id="productModal">
-    <div class="modal-box">
-      <span id="closeModal" class="modal-close">&times;</span>
-      <div id="modalContent"></div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-
+          container.appendChild(card);
+        });
+      })
+      .catch(error => {
+        console.error("Error al cargar el catálogo:", error);
+      });
+  </script>
 </body>
 
 </html>
