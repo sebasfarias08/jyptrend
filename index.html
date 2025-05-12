@@ -100,14 +100,14 @@
     };
 
     // Cargar primeros 10 productos
-    fetch(`${urlBase}?start=0&limit=10`)
+    fetch(`${url}?start=0&limit=10`)
       .then(res => res.json())
       .then(data => {
         catalogoCompleto = data;
         renderCatalogo("Todos");
 
         // Luego cargar el resto en segundo plano
-        fetch(urlBase)
+        fetch(url)
           .then(res => res.json())
           .then(dataCompleta => {
             catalogoCompleto = dataCompleta;
