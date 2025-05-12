@@ -33,6 +33,19 @@
         <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:mx-2">Catálogo</a>
         <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:mx-2">Contacto</a>
       </nav>
+          <!-- Filtros -->
+      <div class="sticky top-0 z-10 bg-white shadow-md flex items-center justify-center py-2 md:py-8 flex-wrap">
+        <div class="w-full max-w-xs mx-auto flex justify-center flex-wrap gap-1 px-2" id="filtros">
+          <button data-filter="Todos"
+            class="filtro-btn active text-blue-700 hover:text-white border border-blue-600 bg-white hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Todos</button>
+          <button data-filter="Perfume"
+            class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Perfume</button>
+          <button data-filter="Botellas"
+            class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Botellas</button>
+          <button data-filter="Vaper"
+            class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Vaper</button>
+        </div>
+      </div>
     </div>
   </header>
   <!-- Contenido Principal -->
@@ -42,20 +55,6 @@
       <h1 class="text-2xl md:text-3xl font-bold mb-6 inline-block animate-marquee">
         10% de descuento pagando en efectivo · Envíos a todo el país · Cuotas · Retiro en oficinas sin costo · 
       </h1>
-    </div>
-
-    <!-- Filtros -->
-    <div class="sticky top-0 z-10 bg-white shadow-md flex items-center justify-center py-2 md:py-8 flex-wrap">
-      <div class="w-full max-w-xs mx-auto flex justify-center flex-wrap gap-1 px-2" id="filtros">
-        <button data-filter="Todos"
-          class="filtro-btn active text-blue-700 hover:text-white border border-blue-600 bg-white hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Todos</button>
-        <button data-filter="Perfume"
-          class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Perfume</button>
-        <button data-filter="Botellas"
-          class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Botellas</button>
-        <button data-filter="Vaper"
-          class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-xs font-medium px-3 py-1 text-center me-3 mb-3">Vaper</button>
-      </div>
     </div>
 
     <!-- Galería -->
