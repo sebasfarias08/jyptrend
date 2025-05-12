@@ -1,9 +1,9 @@
 const BASE_URL = 'https://script.google.com/macros/s/AKfycbxQoPVXwdqPjdb6cUCBCVFW5V-fi-fkQtfn0ZM0_79w636TzzPAkDwaiRsBoehTutdz3g/exec'; // URL del script de Google Apps
-
 const catalogoContainer = document.getElementById('catalogo-container');
 const filtroCategoria = document.getElementById('filtro-categoria');
 const busquedaInput = document.getElementById('busqueda');
 const filtroOferta = document.getElementById('filtro-oferta');
+
 let productos = [];
 let productosMostrados = 0;
 const productosPorPagina = 6;
