@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Catálogo</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-gray-100 p-4">
   <div class="max-w-7xl mx-auto">
     <h1 class="text-3xl font-bold mb-6 text-center">Catálogo de Productos</h1>
+
+    <!-- Filtros -->
+    <div class="flex items-center justify-center py-4 md:py-8 flex-wrap" id="filtros">
+      <button data-filter="Todos" class="filtro-btn active text-blue-700 hover:text-white border border-blue-600 bg-white hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-full text-base font-medium px-5 py-2.5 text-center me-3 mb-3">Todos</button>
+      <button data-filter="Perfume" class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-base font-medium px-5 py-2.5 text-center me-3 mb-3">Perfume</button>
+      <button data-filter="Botellas" class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-base font-medium px-5 py-2.5 text-center me-3 mb-3">Botellas</button>
+      <button data-filter="Vaper" class="filtro-btn text-gray-900 border border-white hover:border-gray-200 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-base font-medium px-5 py-2.5 text-center me-3 mb-3">Vaper</button>
+    </div>
+
+    <!-- Galería -->
     <div id="catalogo" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <!-- Productos cargados desde JS -->
     </div>
@@ -18,37 +26,56 @@
 
   <script>
     const url = "https://script.google.com/macros/s/AKfycbxQoPVXwdqPjdb6cUCBCVFW5V-fi-fkQtfn0ZM0_79w636TzzPAkDwaiRsBoehTutdz3g/exec";
+    let catalogoCompleto = [];
 
+    const renderCatalogo = (categoria) => {
+      const contenedor = document.getElementById("catalogo");
+      contenedor.innerHTML = "";
+
+      const productos = categoria === "Todos"
+        ? catalogoCompleto
+        : catalogoCompleto.filter(p => (p.categoria || "").toLowerCase() === categoria.toLowerCase());
+
+      productos.forEach(item => {
+        const disponible = item.stock > 0;
+        const estado = disponible ? "Disponible" : "No disponible";
+        const color = disponible ? "text-green-600" : "text-gray-500";
+
+        const div = document.createElement("div");
+        div.className = "bg-white rounded-lg shadow-md overflow-hidden";
+        div.innerHTML = `
+          <img src="${item.imagen}" alt="${item.nombre}" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h2 class="text-lg font-semibold">${item.nombre}</h2>
+            <p class="text-sm text-gray-500">${item.marca} - ${item.tamano}</p>
+            <p class="mt-2 text-blue-600 font-bold">$${item.listaUnidad?.toLocaleString("es-AR") || "-"}</p>
+            <p class="mt-1 text-sm font-medium ${color}">${estado}</p>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    };
+
+    // Cargar catálogo y configurar botones
     fetch(url)
       .then(res => res.json())
       .then(data => {
-        const container = document.getElementById("catalogo");
-
-        data.forEach(item => {
-          const available = item.stock > 0;
-          const statusText = available ? "Disponible" : "No disponible";
-          const statusColor = available ? "text-green-600" : "text-gray-500";
-
-          const card = document.createElement("div");
-          card.className = "bg-white rounded-lg shadow-md overflow-hidden";
-
-          card.innerHTML = `
-            <img src="${item.imagen}" alt="${item.nombre}" class="w-full h-48 object-cover">
-            <div class="p-4">
-              <h2 class="text-lg font-semibold">${item.nombre}</h2>
-              <p class="text-sm text-gray-500">${item.marca} - ${item.tamano}</p>
-              <p class="mt-2 text-blue-600 font-bold">$${item.listaUnidad.toLocaleString("es-AR")}</p>
-              <p class="mt-1 text-sm font-medium ${statusColor}">${statusText}</p>
-            </div>
-          `;
-
-          container.appendChild(card);
-        });
-      })
-      .catch(error => {
-        console.error("Error al cargar el catálogo:", error);
+        catalogoCompleto = data;
+        renderCatalogo("Todos");
       });
+
+    // Eventos para filtros
+    document.getElementById("filtros").addEventListener("click", (e) => {
+      if (e.target.classList.contains("filtro-btn")) {
+        document.querySelectorAll(".filtro-btn").forEach(btn => {
+          btn.classList.remove("text-blue-700", "border-blue-600", "hover:bg-blue-700", "hover:text-white");
+          btn.classList.add("text-gray-900", "hover:border-gray-200");
+        });
+
+        e.target.classList.add("text-blue-700", "border-blue-600", "hover:bg-blue-700", "hover:text-white");
+        renderCatalogo(e.target.dataset.filter);
+      }
+    });
   </script>
 </body>
-
 </html>
