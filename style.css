@@ -36,9 +36,10 @@ header {
 
 .logo {
     height: 40px;
-    max-width: 120px; /* o el valor que consideres adecuado */
+    max-width: 120px;
+    /* o el valor que consideres adecuado */
     object-fit: contain;
-}   
+}
 
 .header-title {
     font-size: 24px;
@@ -134,7 +135,7 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px;    
+    padding: 12px;
 }
 
 .producto-card img {
@@ -234,4 +235,20 @@ h1 {
     .filters {
         flex-direction: column;
     }
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-marquee {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 10s linear infinite;
 }

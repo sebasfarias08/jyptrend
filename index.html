@@ -9,6 +9,7 @@
 </head>
 
 <body class="bg-gray-100 p-4">
+  <!-- Header -->
   <header class="sticky top-0 z-30 bg-white shadow-md">
     <div class="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
       <!-- Logo + Título -->
@@ -34,9 +35,14 @@
       </nav>
     </div>
   </header>
-
+  <!-- Contenido Principal -->
   <div class="max-w-7xl mx-auto">
-    <h1 class="text-3xl font-bold mb-6 text-center">Catálogo de Productos</h1>
+    <!-- Banner animado -->
+    <div class="overflow-hidden whitespace-nowrap">
+      <h1 class="text-2xl md:text-3xl font-bold mb-6 inline-block animate-marquee">
+        10% de descuento pagando en efectivo · Envíos a todo el país · Cuotas · Retiro en oficinas sin costo · 
+      </h1>
+    </div>
 
     <!-- Filtros -->
     <div class="sticky top-0 z-10 bg-white shadow-md flex items-center justify-center py-2 md:py-8 flex-wrap">
@@ -57,7 +63,7 @@
       <!-- Productos cargados desde JS -->
     </div>
   </div>
-
+  <!-- script -->
   <script>
     const url = "https://script.google.com/macros/s/AKfycbxQoPVXwdqPjdb6cUCBCVFW5V-fi-fkQtfn0ZM0_79w636TzzPAkDwaiRsBoehTutdz3g/exec";
     let catalogoCompleto = [];
@@ -117,6 +123,12 @@
       menu.classList.toggle('hidden');
     });
   </script>
+  <!-- Whatsapp Boton -->
+  <a href="https://wa.me/5491137923752"
+    class="fixed bottom-4 right-4 z-50 bg-green-500 rounded-full shadow-lg p-2 hover:scale-105 transition-transform"
+    target="_blank" title="Contactanos por WhatsApp">
+    <img src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="WhatsApp" class="w-12 h-12">
+  </a>
 </body>
 
 </html>
