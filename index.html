@@ -38,6 +38,8 @@
     </div>
   </header>
   <!-- Contenido Principal -->
+
+
   <div class="max-w-7xl mx-auto">
     <!-- Filtros -->
     <div class="sticky top-0 z-20 bg-white shadow-md flex items-center justify-center py-2 md:py-8 flex-wrap">
@@ -63,28 +65,15 @@
     <div id="catalogo" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <!-- Productos cargados desde JS -->
     </div>
-
-    <!-- Botón Cargar más -->
-    <div class="flex justify-center mt-8">
-      <button id="cargar-mas-btn"
-        class="bg-blue-500 text-white rounded-full px-6 py-2 text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300">
-        Cargar más
-      </button>
-    </div>
   </div>
-
-  <!-- Script -->
+  <!-- script -->
   <script>
     const url = "https://script.google.com/macros/s/AKfycbxQoPVXwdqPjdb6cUCBCVFW5V-fi-fkQtfn0ZM0_79w636TzzPAkDwaiRsBoehTutdz3g/exec";
     let catalogoCompleto = [];
-    let productosCargados = 0;  // Este es el contador de productos cargados
-    const productosPorCarga = 20;  // Cantidad de productos a cargar por clic en "Cargar más"
 
-    const renderCatalogo = (categoria, cargaInicial = false) => {
+    const renderCatalogo = (categoria) => {
       const contenedor = document.getElementById("catalogo");
-      if (cargaInicial) {
-        contenedor.innerHTML = "";  // Limpiar el catálogo al cambiar de filtro
-      }
+      contenedor.innerHTML = "";
 
       let productos = categoria === "Todos"
         ? catalogoCompleto
@@ -98,8 +87,7 @@
         return a.nombre.localeCompare(b.nombre);
       });
 
-      // Mostrar los primeros 'productosPorCarga' productos
-      productos.slice(productosCargados, productosCargados + productosPorCarga).forEach(item => {
+      productos.forEach(item => {
         const disponible = item.stock > 0;
         const estado = disponible ? "Disponible" : "No disponible";
         const color = disponible ? "text-green-600" : "text-gray-500";
@@ -119,46 +107,44 @@
       });
     };
 
-    // Función para cargar más productos
-    const cargarMasProductos = (categoria) => {
-      productosCargados += productosPorCarga;
-      renderCatalogo(categoria);
-    };
-
-    // Cargar productos iniciales con el filtro "Perfume"
-    fetch(`${url}?start=0&limit=${productosPorCarga}`)
+    // Cargar primeros 6 productos (filtro inicial: "Perfume")
+    fetch(`${url}?start=0&limit=6`)
       .then(res => res.json())
       .then(data => {
         catalogoCompleto = data;
-        renderCatalogo("Perfume", true);
+        renderCatalogo("Perfume");
+
+        // Cargar el catálogo completo en segundo plano
+        fetch(url)
+          .then(res => res.json())
+          .then(dataCompleta => {
+            catalogoCompleto = dataCompleta;
+          })
+          .catch(err => console.error("Error cargando catálogo completo:", err));
       })
-      .catch(err => console.error("Error cargando productos:", err));
+      .catch(err => console.error("Error cargando los primeros productos:", err));
 
     // Filtros
     document.getElementById("filtros").addEventListener("click", (e) => {
       if (e.target.classList.contains("filtro-btn")) {
-        // Cambiar estilo del filtro activo
         document.querySelectorAll(".filtro-btn").forEach(btn => {
           btn.classList.remove("text-blue-700", "border-blue-600", "hover:bg-blue-700", "hover:text-white");
           btn.classList.add("text-gray-900", "hover:border-gray-200");
         });
 
         e.target.classList.add("text-blue-700", "border-blue-600", "hover:bg-blue-700", "hover:text-white");
-
-        // Reiniciar la carga de productos
-        productosCargados = 0;
-        const filtroActivo = e.target.dataset.filter || "Perfume";
-        renderCatalogo(filtroActivo, true);
+        renderCatalogo(e.target.dataset.filter);
       }
     });
 
-    // Botón "Cargar más"
-    document.getElementById("cargar-mas-btn").addEventListener("click", () => {
-      const filtroActivo = document.querySelector(".filtro-btn.text-blue-700")?.dataset.filter || "Perfume";
-      cargarMasProductos(filtroActivo);
+    // Menú móvil
+    const toggleBtn = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-menu');
+    toggleBtn.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
     });
-  </script>
 
+  </script>
   <!-- Whatsapp Boton -->
   <a href="https://wa.me/5491137923752"
     class="fixed bottom-4 right-4 z-50 bg-green-500 rounded-full shadow-lg p-2 hover:scale-105 transition-transform"
