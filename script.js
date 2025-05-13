@@ -2,6 +2,32 @@
 const url = "https://script.google.com/macros/s/AKfycbxQoPVXwdqPjdb6cUCBCVFW5V-fi-fkQtfn0ZM0_79w636TzzPAkDwaiRsBoehTutdz3g/exec";
 let catalogoCompleto = [];
 
+// Referencias al modal y elementos internos
+const modal = document.getElementById("modalImagen");
+const imgModal = document.getElementById("imagenAmpliada");
+const btnCerrar = document.getElementById("cerrarModal");
+
+// Función para abrir el modal
+function abrirModalImagen(src) {
+  imgModal.src = src;
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+// Función para cerrar el modal
+function cerrarModalImagen() {
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
+  imgModal.src = "";
+}
+
+// Event listeners
+btnCerrar.addEventListener("click", cerrarModalImagen);
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) cerrarModalImagen(); // Cierra si hace clic fuera de la imagen
+});
+
+
 const renderCatalogo = (categoria) => {
     const contenedor = document.getElementById("catalogo");
     contenedor.innerHTML = "";
@@ -38,6 +64,12 @@ const renderCatalogo = (categoria) => {
         </div>
         `;
         contenedor.appendChild(div);
+        
+        // Agregar evento para abrir modal al hacer clic en la imagen
+        const img = div.querySelector("img");
+        img.addEventListener("click", () => {
+        abrirModalImagen(item.imagen);
+        });
     });
 };
 
