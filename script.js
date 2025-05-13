@@ -67,7 +67,13 @@ document.getElementById("filtros").addEventListener("click", (e) => {
         });
 
         e.target.classList.add("text-blue-700", "border-blue-600", "hover:bg-blue-700", "hover:text-white");
+        
+        // 👉 Renderiza el catálogo con el filtro seleccionado
         renderCatalogo(e.target.dataset.filter);
+
+        // 👉 Hace scroll al catálogo
+        const catalogo = document.getElementById("catalogo");
+        catalogo.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 });
 
