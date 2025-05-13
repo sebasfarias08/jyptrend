@@ -1,85 +1,79 @@
-const BASE_URL = 'https://script.google.com/macros/s/AKfycbxQoPVXwdqPjdb6cUCBCVFW5V-fi-fkQtfn0ZM0_79w636TzzPAkDwaiRsBoehTutdz3g/exec'; // URL del script de Google Apps
-const catalogoContainer = document.getElementById('catalogo-container');
-const filtroCategoria = document.getElementById('filtro-categoria');
-const busquedaInput = document.getElementById('busqueda');
-const filtroOferta = document.getElementById('filtro-oferta');
+// script.js
+const url = "https://script.google.com/macros/s/AKfycbxQoPVXwdqPjdb6cUCBCVFW5V-fi-fkQtfn0ZM0_79w636TzzPAkDwaiRsBoehTutdz3g/exec";
+let catalogoCompleto = [];
 
-let productos = [];
-let productosMostrados = 0;
-const productosPorPagina = 6;
+const renderCatalogo = (categoria) => {
+    const contenedor = document.getElementById("catalogo");
+    contenedor.innerHTML = "";
 
+    let productos = categoria === "Todos"
+        ? catalogoCompleto
+        : catalogoCompleto.filter(p => (p.categoria || "").toLowerCase() === categoria.toLowerCase());
 
-function construirURL() {
-    const categoria = filtroCategoria.value;
-    const nombre = busquedaInput.value.trim();
-    const soloOferta = filtroOferta.checked;
-
-    const params = new URLSearchParams();
-
-    if (nombre) params.append('nombre', nombre);
-    if (categoria) params.append('categoria', categoria);
-    if (soloOferta) params.append('oferta', 'si');
-
-    return `${BASE_URL}?${params.toString()}`;
-}
-
-
-function cargarProductos() {
-    const url = construirURL();
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            productos = data;
-            productosMostrados = 0;
-            catalogoContainer.innerHTML = '';
-            mostrarSiguienteLote();
-        })
-        .catch(error => {
-            catalogoContainer.innerHTML = '<p>Error al cargar productos.</p>';
-            console.error(error);
-        });
-}
-
-function mostrarSiguienteLote() {
-    const lote = productos.slice(productosMostrados, productosMostrados + productosPorPagina);
-    lote.forEach(p => {
-        const card = document.createElement('div');
-        card.className = 'producto-card';
-        card.innerHTML = `
-            <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" />
-            <h3>${p.nombre}</h3>
-            <p>${p.descripcion}</p>
-            <p><strong>Marca:</strong> ${p.marca}</p>
-            <p><strong>Tamaño:</strong> ${p.tamano}</p>
-            <p><strong>Precio:</strong> $${p.listaUnidad}</p>
-            <p><strong>Stock:</strong> ${p.stock}</p>
-            ${p.oferta === "Si" ? `<p class="oferta">🔥 En oferta</p>` : ''}
-        `;
-        catalogoContainer.appendChild(card);
+    // Ordenar: disponibles primero, luego alfabéticamente por nombre
+    productos.sort((a, b) => {
+        const disponibleA = a.stock > 0 ? 0 : 1;
+        const disponibleB = b.stock > 0 ? 0 : 1;
+        if (disponibleA !== disponibleB) return disponibleA - disponibleB;
+        return a.nombre.localeCompare(b.nombre);
     });
 
-    productosMostrados += lote.length;
+    productos.forEach(item => {
+        const disponible = item.stock > 0;
+        const estado = disponible ? "Disponible" : "No disponible";
+        const color = disponible ? "text-green-600" : "text-gray-500";
 
-    const boton = document.getElementById('loadMoreBtn');
-    if (productosMostrados >= productos.length) {
-        boton.style.display = 'none';
-    } else {
-        boton.style.display = 'block';
-    }
-}
+        const div = document.createElement("div");
+        div.className = "bg-white rounded-lg shadow-md overflow-hidden";
+        div.innerHTML = `
+          <div class="relative">
+            <img src="${item.imagen}" alt="${item.nombre}" class="w-full h-48 object-cover ${!disponible ? 'grayscale opacity-60' : ''}">
+            ${!disponible ? '<div class="absolute top-2 left-2 bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded">Agotado</div>' : ''}   
+          </div>
+          <div class="p-4">
+          <h2 class="text-lg font-semibold">${item.nombre}</h2>
+          <p class="text-sm text-gray-500">${item.marca} - ${item.tamano}</p>
+          <p class="mt-2 text-blue-600 font-bold">$${item.listaUnidad?.toLocaleString("es-AR") || "-"}</p>
+          <p class="mt-1 text-sm font-medium ${color}">${estado}</p>
+        </div>
+        `;
+        contenedor.appendChild(div);
+    });
+};
 
-filtroCategoria.addEventListener('change', cargarProductos);
-busquedaInput.addEventListener('input', () => {
-    if (busquedaInput.value.length > 2 || busquedaInput.value.length === 0) {
-        cargarProductos();
+// Cargar primeros 1000 productos (filtro inicial: "Perfume")
+fetch(`${url}?start=0&limit=1000`)
+    .then(res => res.json())
+    .then(data => {
+        catalogoCompleto = data;
+        renderCatalogo("Perfume");
+
+        // Cargar el catálogo completo en segundo plano
+        fetch(url)
+            .then(res => res.json())
+            .then(dataCompleta => {
+                catalogoCompleto = dataCompleta;
+            })
+            .catch(err => console.error("Error cargando catálogo completo:", err));
+    })
+    .catch(err => console.error("Error cargando los primeros productos:", err));
+
+// Filtros
+document.getElementById("filtros").addEventListener("click", (e) => {
+    if (e.target.classList.contains("filtro-btn")) {
+        document.querySelectorAll(".filtro-btn").forEach(btn => {
+            btn.classList.remove("text-blue-700", "border-blue-600", "hover:bg-blue-700", "hover:text-white");
+            btn.classList.add("text-gray-900", "hover:border-gray-200");
+        });
+
+        e.target.classList.add("text-blue-700", "border-blue-600", "hover:bg-blue-700", "hover:text-white");
+        renderCatalogo(e.target.dataset.filter);
     }
 });
 
-// Cargar productos al inicio
-document.addEventListener('DOMContentLoaded', () => {
-    filtroCategoria.addEventListener('change', cargarProductos);
-    busquedaInput.addEventListener('input', cargarProductos);
-    filtroOferta.addEventListener('change', cargarProductos);
-    document.getElementById('loadMoreBtn').addEventListener('click', mostrarSiguienteLote); // 👈 esta línea nueva
-    cargarProductos(); // Llama a la función inicialmente para cargar productos
+// Menú móvil
+const toggleBtn = document.getElementById('menu-toggle');
+const menu = document.getElementById('mobile-menu');
+toggleBtn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
 });
