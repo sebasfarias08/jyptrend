@@ -1,12 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const url = "https://script.google.com/macros/s/AKfycbxQoPVXwdqPjdb6cUCBCVFW5V-fi-fkQtfn0ZM0_79w636TzzPAkDwaiRsBoehTutdz3g/exec";
+    const url = "https://script.google.com/macros/s/AKfycbwX7NDsIB0tXoYgPqHlqgfxYJE4SoIa6F3v9VjgSbsuXdOIT75lf0uepwo_RPNynrLN/exec";
     let catalogoCompleto = [];
 
     const modal = document.getElementById("modalImagen");
     const imgModal = document.getElementById("imagenAmpliada");
     const btnCerrar = document.getElementById("cerrarModal");
-
     const spinner = document.getElementById("spinner");
     const contenedor = document.getElementById("catalogo");
 
@@ -55,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 div.innerHTML = `
                 <div class="relative">
                     <img src="${item.imagen}" alt="${item.nombre}" class="w-full h-48 object-cover ${!disponible ? 'grayscale opacity-60' : ''}">
-                    ${!disponible ? '<div class="absolute top-2 left-2 bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded">Agotado</div>' : ''}   
+                    ${!disponible ? '<div class="absolute top-2 left-2 bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded">AGOTADO</div>' : ''}   
                 </div>
                 <div class="p-4">
                     <h2 class="text-lg font-semibold">${item.nombre}</h2>
