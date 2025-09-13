@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(data => {
             catalogoCompleto = data;
-            renderCatalogo("Perfume");
+            renderCatalogo("Todos");
 
             fetch(url)
                 .then(res => res.json())
