@@ -122,33 +122,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 300);
     };
 
-    // Cargar primeros 1000 productos
-    fetch(`${url}?start=0&limit=1000`)
+    // Cargar todos los productos de entrada
+    fetch(url)
         .then(res => res.json())
         .then(data => {
             catalogoCompleto = data;
-            renderCatalogo("Todos");
+            //mostrar todos los perfumes primero
+            renderCatalogo("Perfume");
 
-            fetch(url)
-                .then(res => res.json())
-                .then(dataCompleta => {
-                    catalogoCompleto = dataCompleta;
-
-                    // Lógica de búsqueda
-                    document.getElementById("busqueda").addEventListener("input", (e) => {
-                        const termino = e.target.value.toLowerCase();
-                        const productosFiltrados = catalogoCompleto.filter(item =>
-                            (item.nombre || "").toLowerCase().includes(termino) ||
-                            (item.marca || "").toLowerCase().includes(termino) ||
-                            (item.tamano || "").toLowerCase().includes(termino)
-                        );
-                        renderCatalogoFiltrado(productosFiltrados);
-                    });
-
-                })
-                .catch(err => console.error("Error cargando catálogo completo:", err));
+            // Activar búsqueda en todo el catálogo
+            document.getElementById("busqueda").addEventListener("input", (e) => {
+                const termino = e.target.value.toLowerCase();
+                const productosFiltrados = catalogoCompleto.filter(item =>
+                    (item.nombre || "").toLowerCase().includes(termino) ||
+                    (item.marca || "").toLowerCase().includes(termino) ||
+                    (item.tamano || "").toLowerCase().includes(termino)
+                );
+                renderCatalogoFiltrado(productosFiltrados);
+            });
         })
-        .catch(err => console.error("Error cargando los primeros productos:", err));
+        .catch(err => console.error("Error cargando el catalogo:", err));
 
     document.getElementById("filtros").addEventListener("click", (e) => {
         if (e.target.classList.contains("filtro-btn")) {
