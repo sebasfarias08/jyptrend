@@ -17,56 +17,23 @@ export default function Cart() {
       return;
     }
 
-    // ✅ Insertar el pedido
-    const { data, error } = await supabase
-      .from("pedidos")
-      .insert([
-        {
-          vendedor_email: user.email,
-          productos: cart,
-          total,
-          estado: "Pendiente"
-        }
-      ])
-      .select("id");
+    // Llamada atómica a la función en la base
+    const { data, error } = await supabase.rpc("process_order", {
+      _vendedor: user.email,
+      _items: cart,   // supabase-js serializa a jsonb
+      _total: total
+    });
 
     if (error) {
-      console.error("❌ Error registrando pedido:", error);
-      alert("❌ Error procesando pedido");
+      console.error("❌ Error procesando pedido:", error);
+      // Mensaje de stock insuficiente desde la excepción de la función
+      alert(`❌ No se pudo completar el pedido: ${error.message}`);
       return;
     }
 
-    const pedidoId = data[0].id;
-
-    // ✅ Agrupar productos repetidos
-    const itemsGrouped = cart.reduce((acc, item) => {
-      acc[item.id] = (acc[item.id] || 0) + 1;
-      return acc;
-    }, {});
-
-    // ✅ Descontar stock según cantidad por producto
-    for (const productId in itemsGrouped) {
-      const count = itemsGrouped[productId];
-
-      // Obtener stock actual antes de actualizar
-      const { data: prodData } = await supabase
-        .from("productos")
-        .select("stock")
-        .eq("id", productId)
-        .single();
-
-      if (prodData?.stock >= count) {
-        await supabase
-          .from("productos")
-          .update({ stock: prodData.stock - count })
-          .eq("id", productId);
-      }
-    }
-
-    alert(`✅ Pedido registrado! ID: ${pedidoId}`);
-    setCart([]); // ✅ Vaciamos carrito
+    alert(`✅ Pedido registrado! ID: ${data}`);
+    setCart([]); // Vaciar carrito tras éxito
   };
-
 
   if (!cart.length) {
     return <p className="text-center text-gray-600 mt-10">El carrito está vacío 🛒</p>;
