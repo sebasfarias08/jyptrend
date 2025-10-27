@@ -5,6 +5,9 @@ import { supabase } from '../services/supabaseClient';
 export default function ProductList() {
   const { addToCart } = useCart();
   const [productos, setProductos] = useState([]);
+  const imgSrc = p.imagen_path
+    ? supabase.storage.from('productos').getPublicUrl(p.imagen_path).publicURL
+    : p.imagen_url || "";
 
   useEffect(() => {
     async function cargarProductos() {
@@ -41,10 +44,9 @@ export default function ProductList() {
             onClick={() => p.stock > 0 && addToCart(p)}
           >
             <img
-              src={p.imagen_url}
+              src={imgSrc}
               alt={p.nombre}
-              className="w-full h-32 object-cover rounded mb-2"
-              loading="lazy"
+              className="w-full h-32 object-cover rounded mb-2 bg-gray-200"
             />
             <p className="text-gray-700 font-semibold">{p.nombre}</p>
             <p className="text-blue-600 font-bold mt-1">${p.precio}</p>
