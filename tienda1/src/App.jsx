@@ -3,6 +3,7 @@ import { useAuth } from "./context/AuthContext";
 import Header from "./components/Header";
 import ProductList from "./components/ProductList";
 import Cart from "./components/Cart";
+import OrdersList from "./components/OrdersList";
 import GoogleLoginButton from "./components/GoogleLoginButton";
 
 export default function App() {
@@ -10,9 +11,12 @@ export default function App() {
   const { user } = useAuth();
 
   if (!user) {
-    return <GoogleLoginButton />; // Si no hay usuario, mostramos login
+    return (
+      <div className="min-h-screen bg-slate-100 flex justify-center items-center">
+        <GoogleLoginButton />
+      </div>
+    );
   }
-
   return (
     <div className="min-h-screen bg-slate-100">
       <Header setView={setView} />
@@ -20,6 +24,7 @@ export default function App() {
       <main className="p-4">
         {view === "tienda" && <ProductList />}
         {view === "carrito" && <Cart />}
+        {view === "pedidos" && <OrdersList />}
       </main>
     </div>
   );
