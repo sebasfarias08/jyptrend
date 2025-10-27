@@ -17,7 +17,7 @@ export default function Cart() {
       return;
     }
 
-    // ✅ Insertamos pedido
+    // ✅ Insertar el pedido
     const { data, error } = await supabase
       .from("pedidos")
       .insert([
@@ -31,19 +31,36 @@ export default function Cart() {
       .select("id");
 
     if (error) {
-      console.error("❌ Error al registrar pedido:", error);
+      console.error("❌ Error registrando pedido:", error);
       alert("❌ Error procesando pedido");
       return;
     }
 
     const pedidoId = data[0].id;
 
-    // ✅ Actualizamos stock producto por producto
-    for (const item of cart) {
-      await supabase
+    // ✅ Agrupar productos repetidos
+    const itemsGrouped = cart.reduce((acc, item) => {
+      acc[item.id] = (acc[item.id] || 0) + 1;
+      return acc;
+    }, {});
+
+    // ✅ Descontar stock según cantidad por producto
+    for (const productId in itemsGrouped) {
+      const count = itemsGrouped[productId];
+
+      // Obtener stock actual antes de actualizar
+      const { data: prodData } = await supabase
         .from("productos")
-        .update({ stock: item.stock - 1 })
-        .eq("id", item.id);
+        .select("stock")
+        .eq("id", productId)
+        .single();
+
+      if (prodData?.stock >= count) {
+        await supabase
+          .from("productos")
+          .update({ stock: prodData.stock - count })
+          .eq("id", productId);
+      }
     }
 
     alert(`✅ Pedido registrado! ID: ${pedidoId}`);
