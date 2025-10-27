@@ -1,38 +1,42 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
+import { supabase } from "../services/supabaseClient";
+import { useAuth } from "../context/AuthContext";
 
 export default function Cart() {
   const { cart, setCart } = useCart();
+  const { user } = useAuth();
 
-  const total = cart.reduce((acc, item) => acc + (item.listaUnidad || 0), 0);
+  const total = cart.reduce((acc, item) => acc + (item.precio || 0), 0);
 
   const checkout = async () => {
     if (!cart.length) return;
 
-    const body = {
+    if (!user) {
+      alert("Debes iniciar sesión para hacer un pedido ✅");
+      return;
+    }
+
+    const pedidoData = {
+      vendedor_email: user.email,
       productos: cart,
-      total
+      total,
+      estado: "Pendiente"
     };
 
-    const res = await fetch(
-      "https://script.google.com/macros/s/AKfycbwX7NDsIB0tXoYgPqHlqgfxYJE4SoIa6F3v9VjgSbsuXdOIT75lf0uepwo_RPNynrLN/exec",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
-      }
-    );
+    const { data, error } = await supabase
+      .from("pedidos")
+      .insert([pedidoData])
+      .select("id"); // Para obtener el ID generado
 
-    const data = await res.json();
-
-    if (data.status === "ok") {
-      alert(`✅ Pedido registrado con ID: ${data.pedidoId}`);
-      setCart([]); // Vaciamos carrito
-    } else {
-      alert("❌ Error procesando pedido");
+    if (error) {
+      console.error("❌ Error al registrar pedido:", error);
+      alert("Error procesando pedido");
+      return;
     }
+
+    alert(`✅ Pedido registrado con ID: ${data[0].id}`);
+    setCart([]); // Vaciamos carrito
   };
 
   if (!cart.length) {
@@ -50,14 +54,16 @@ export default function Cart() {
         >
           <div className="flex items-center gap-2">
             <img
-              src={p.imagen}
+              src={p.imagen_url || p.imagen}
               alt={p.nombre}
               className="w-12 h-12 object-cover rounded"
             />
             <span className="text-sm font-medium">{p.nombre}</span>
           </div>
           <div className="text-right">
-            <p className="text-blue-600 font-bold">${p.listaUnidad}</p>
+            <p className="text-blue-600 font-bold">
+              ${p.precio || p.listaUnidad}
+            </p>
             <button
               className="text-xs text-red-600 hover:underline"
               onClick={() =>
