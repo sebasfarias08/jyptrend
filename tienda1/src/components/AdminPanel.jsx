@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
 
-export default function AdminPanel() {
+export default function AdminPanel({ setView }) {
   const [pedidos, setPedidos] = useState([]);
 
   useEffect(() => {
@@ -28,7 +28,16 @@ export default function AdminPanel() {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">📌 Panel Admin</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">📌 Panel Admin</h2>
+
+        <button
+          className="bg-purple-600 text-white px-3 py-2 rounded text-sm hover:bg-purple-700"
+          onClick={() => setView("productos")}
+        >
+          🛠️ Gestionar productos
+        </button>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white rounded shadow">
