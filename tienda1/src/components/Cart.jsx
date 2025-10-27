@@ -17,27 +17,39 @@ export default function Cart() {
       return;
     }
 
-    const pedidoData = {
-      vendedor_email: user.email,
-      productos: cart,
-      total,
-      estado: "Pendiente"
-    };
-
+    // ✅ Insertamos pedido
     const { data, error } = await supabase
       .from("pedidos")
-      .insert([pedidoData])
-      .select("id"); // Para obtener el ID generado
+      .insert([
+        {
+          vendedor_email: user.email,
+          productos: cart,
+          total,
+          estado: "Pendiente"
+        }
+      ])
+      .select("id");
 
     if (error) {
       console.error("❌ Error al registrar pedido:", error);
-      alert("Error procesando pedido");
+      alert("❌ Error procesando pedido");
       return;
     }
 
-    alert(`✅ Pedido registrado con ID: ${data[0].id}`);
-    setCart([]); // Vaciamos carrito
+    const pedidoId = data[0].id;
+
+    // ✅ Actualizamos stock producto por producto
+    for (const item of cart) {
+      await supabase
+        .from("productos")
+        .update({ stock: item.stock - 1 })
+        .eq("id", item.id);
+    }
+
+    alert(`✅ Pedido registrado! ID: ${pedidoId}`);
+    setCart([]); // ✅ Vaciamos carrito
   };
+
 
   if (!cart.length) {
     return <p className="text-center text-gray-600 mt-10">El carrito está vacío 🛒</p>;
