@@ -17,7 +17,7 @@ export default function Header({ setView }) {
       </h1>
 
       <nav className="flex gap-4 items-center text-sm font-semibold">
-
+  
         <span
           className="cursor-pointer hover:underline"
           onClick={() => setView("tienda")}
@@ -37,7 +37,6 @@ export default function Header({ setView }) {
           onClick={() => setView("carrito")}
         >
           <span className="material-icons">shopping_cart</span>
-
           {items > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-600 text-xs text-white font-bold rounded-full px-1">
               {items}
@@ -45,15 +44,23 @@ export default function Header({ setView }) {
           )}
         </div>
 
-        {user && (
-          <img
-            src={user.picture}
-            alt="Perfil"
-            className="w-8 h-8 rounded-full border-2 border-white cursor-pointer"
-            title={user.email}
-            onClick={() => setView("pedidos")}
-          />
-        )}
+        <img
+          src={user.picture}
+          alt="Perfil"
+          className="w-8 h-8 rounded-full border-2 border-white cursor-pointer"
+          onClick={() => setView("perfil")}
+          title={user.email}
+        />
+
+        <button
+          className="text-xs bg-red-500 px-2 py-1 rounded hover:bg-red-600"
+          onClick={() => {
+            localStorage.removeItem("user");
+            window.location.reload();
+          }}
+        >
+          Salir
+        </button>
 
       </nav>
     </header>
