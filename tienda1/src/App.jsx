@@ -6,6 +6,7 @@ import Cart from "./components/Cart";
 import OrdersList from "./components/OrdersList";
 import GoogleLoginButton from "./components/GoogleLoginButton";
 import Profile from "./components/Profile";
+import AdminPanel from "./components/AdminPanel";
 
 export default function App() {
   const [view, setView] = useState("tienda");
@@ -24,6 +25,7 @@ export default function App() {
 
       <main className="p-4">
         {view === "tienda" && <ProductList />}
+        {view === "admin" && <AdminPanel />}
         {view === "carrito" && <Cart />}
         {view === "pedidos" && <OrdersList />}
         {view === "perfil" && <Profile />}

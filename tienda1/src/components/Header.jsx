@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Header({ setView }) {
   const { cart } = useCart();
-  const { user } = useAuth();
+  const { user, rol, logout } = useAuth();
   const items = cart.length;
 
   return (
@@ -17,7 +17,6 @@ export default function Header({ setView }) {
       </h1>
 
       <nav className="flex gap-4 items-center text-sm font-semibold">
-  
         <span
           className="cursor-pointer hover:underline"
           onClick={() => setView("tienda")}
@@ -32,6 +31,15 @@ export default function Header({ setView }) {
           Mis pedidos
         </span>
 
+        {rol === "admin" && (
+          <span
+            className="cursor-pointer hover:underline"
+            onClick={() => setView("admin")}
+          >
+            ⚙️ Admin
+          </span>
+        )}
+
         <div
           className="relative cursor-pointer"
           onClick={() => setView("carrito")}
@@ -44,24 +52,22 @@ export default function Header({ setView }) {
           )}
         </div>
 
-        <img
-          src={user.picture}
-          alt="Perfil"
-          className="w-8 h-8 rounded-full border-2 border-white cursor-pointer"
-          onClick={() => setView("perfil")}
-          title={user.email}
-        />
+        {user && (
+          <img
+            src={user.picture}
+            alt="Perfil"
+            className="w-8 h-8 rounded-full border-2 border-white cursor-pointer"
+            title={user.email}
+            onClick={() => setView("perfil")}
+          />
+        )}
 
         <button
           className="text-xs bg-red-500 px-2 py-1 rounded hover:bg-red-600"
-          onClick={() => {
-            localStorage.removeItem("user");
-            window.location.reload();
-          }}
+          onClick={logout}
         >
           Salir
         </button>
-
       </nav>
     </header>
   );
