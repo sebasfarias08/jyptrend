@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
+import ProductForm from "./ProductForm";
 
 export default function ProductManager() {
   const [productos, setProductos] = useState([]);
   const [filtro, setFiltro] = useState("");
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     cargarProductos();
@@ -33,7 +35,23 @@ export default function ProductManager() {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">🛠️ Gestión de Productos</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">🛠️ Gestión de Productos</h2>
+        
+        <button
+          className="bg-purple-600 text-white px-3 py-2 rounded text-sm hover:bg-purple-700"
+          onClick={() => setShowForm(!showForm)}
+        >
+          ➕ Nuevo producto
+        </button>
+      </div>
+
+      {showForm && (
+        <ProductForm
+          onClose={() => setShowForm(false)}
+          reload={cargarProductos}
+        />
+      )}
 
       <input
         type="text"
@@ -83,7 +101,7 @@ export default function ProductManager() {
                     onClick={() => actualizarProducto(p.id, "activo", !p.activo)}
                   >
                     {p.activo ? "🔴 Desactivar" : "🟢 Activar"}
-                  </button> 
+                  </button>
                 </td>
               </tr>
             ))}
