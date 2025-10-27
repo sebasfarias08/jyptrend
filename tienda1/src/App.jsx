@@ -7,6 +7,8 @@ import OrdersList from "./components/OrdersList";
 import GoogleLoginButton from "./components/GoogleLoginButton";
 import Profile from "./components/Profile";
 import AdminPanel from "./components/AdminPanel";
+import ProductManager from "./components/ProductManager";
+
 
 export default function App() {
   const [view, setView] = useState("tienda");
@@ -29,6 +31,7 @@ export default function App() {
         {view === "carrito" && <Cart />}
         {view === "pedidos" && <OrdersList />}
         {view === "perfil" && <Profile />}
+        {view === "productos" && <ProductManager />}
       </main>
     </div>
   );
