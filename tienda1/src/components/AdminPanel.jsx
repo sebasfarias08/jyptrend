@@ -30,45 +30,69 @@ export default function AdminPanel() {
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">📌 Panel Admin</h2>
 
-      {pedidos.map((p) => (
-        <div key={p.id} className="bg-white shadow p-3 rounded-lg mb-3">
-          <p className="font-bold">Pedido #{p.id}</p>
-          <p className="text-sm text-gray-600">{new Date(p.fecha).toLocaleString()}</p>
-          <p className="text-sm text-gray-700 mt-2"><b>Vendedor:</b> {p.vendedor_email}</p>
-          <p className="text-sm font-semibold mt-2">Total: ${p.total}</p>
-          <p className="text-xs mt-1">Estado: {p.estado}</p>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white rounded shadow">
+          <thead className="bg-blue-600 text-white text-sm">
+            <tr>
+              <th className="p-2 text-left">ID</th>
+              <th className="p-2 text-left">Fecha</th>
+              <th className="p-2 text-left">Vendedor</th>
+              <th className="p-2 text-left">Total</th>
+              <th className="p-2 text-left">Estado</th>
+              <th className="p-2 text-left">Acciones</th>
+            </tr>
+          </thead>
 
-          <details className="mt-2 cursor-pointer">
-            <summary className="text-sm text-blue-800">Ver productos</summary>
-            <ul className="text-xs mt-1 pl-4 text-gray-700">
-              {p.productos.map((prod, i) => (
-                <li key={i}>- {prod.nombre} (x1)</li>
-              ))}
-            </ul>
-          </details>
+          <tbody className="text-sm">
+            {pedidos.map((p) => (
+              <tr key={p.id} className="border-b hover:bg-gray-50">
+                <td className="p-2">{p.id}</td>
+                <td className="p-2 text-gray-600">
+                  {new Date(p.fecha).toLocaleString()}
+                </td>
+                <td className="p-2">{p.vendedor_email}</td>
+                <td className="p-2 font-bold">${p.total}</td>
+                <td className="p-2 font-semibold">{p.estado}</td>
 
-          <div className="flex gap-2 mt-2">
-            <button
-              className="bg-green-600 text-white text-xs px-2 py-1 rounded"
-              onClick={() => cambiarEstado(p.id, "Entregado")}
-            >
-              ✅ Entregado
-            </button>
-            <button
-              className="bg-yellow-600 text-white text-xs px-2 py-1 rounded"
-              onClick={() => cambiarEstado(p.id, "En Proceso")}
-            >
-              🔄 En Proceso
-            </button>
-            <button
-              className="bg-red-600 text-white text-xs px-2 py-1 rounded"
-              onClick={() => cambiarEstado(p.id, "Cancelado")}
-            >
-              ❌ Cancelar
-            </button>
-          </div>
-        </div>
-      ))}
+                <td className="p-2">
+                  <div className="flex gap-1">
+                    <button
+                      className="bg-green-600 text-white text-xs px-2 py-1 rounded"
+                      onClick={() => cambiarEstado(p.id, "Entregado")}
+                    >
+                      ✅
+                    </button>
+                    <button
+                      className="bg-yellow-500 text-white text-xs px-2 py-1 rounded"
+                      onClick={() => cambiarEstado(p.id, "En Proceso")}
+                    >
+                      🔄
+                    </button>
+                    <button
+                      className="bg-red-600 text-white text-xs px-2 py-1 rounded"
+                      onClick={() => cambiarEstado(p.id, "Cancelado")}
+                    >
+                      ❌
+                    </button>
+
+                    <details>
+                      <summary className="cursor-pointer text-blue-800 text-xs">
+                        📦
+                      </summary>
+                      <ul className="absolute bg-white border rounded p-2 shadow text-xs mt-1">
+                        {p.productos.map((prod, i) => (
+                          <li key={i}>• {prod.nombre}</li>
+                        ))}
+                      </ul>
+                    </details>
+
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
