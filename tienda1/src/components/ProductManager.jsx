@@ -17,17 +17,39 @@ export default function ProductManager() {
       .select("*")
       .order("nombre", { ascending: true });
 
-    if (!error) setProductos(data);
+    if (!error) setProductos(data || []);
   };
 
   const actualizarProducto = async (id, field, value) => {
-    await supabase.from("productos").update({ [field]: value }).eq("id", id);
+    const { error } = await supabase.from("productos").update({ [field]: value }).eq("id", id);
+    if (error) {
+      alert("Error al actualizar el producto: " + error.message);
+    }
     cargarProductos();
   };
 
   const productosFiltrados = productos.filter((p) =>
     p.nombre.toLowerCase().includes(filtro.toLowerCase())
   );
+
+  // Local state for editing price and stock
+  const [editValues, setEditValues] = useState({});
+
+  const handleEditChange = (id, field, value) => {
+    setEditValues((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleEditBlur = (id, field) => {
+    if (editValues[id] && editValues[id][field] !== undefined) {
+      actualizarProducto(id, field, Number(editValues[id][field]));
+    }
+  };
 
   return (
     <div className="p-4">
@@ -41,9 +63,12 @@ export default function ProductManager() {
         </button>
       </div>
 
-      {showForm && (
-        <ProductForm onClose={() => setShowForm(false)} reload={cargarProductos} />
-      )}
+      // ProductForm expects:
+      // - onClose: callback to close the form modal
+      // - reload: callback to refresh the product list after adding a product
+            {showForm && (
+              <ProductForm onClose={() => setShowForm(false)} reload={cargarProductos} />
+            )}
 
       <input
         type="text"
@@ -67,7 +92,7 @@ export default function ProductManager() {
           <tbody className="text-sm">
             {productosFiltrados.map((p) => {
               const imgSrc = p.imagen_path
-                ? supabase.storage.from("productos").getPublicUrl(p.imagen_path).publicURL
+                ? supabase.storage.from("productos").getPublicUrl(p.imagen_path).data.publicUrl
                 : p.imagen_url || "";
 
               return (
@@ -87,21 +112,31 @@ export default function ProductManager() {
                   <td className="p-2">
                     <input
                       type="number"
-                      defaultValue={p.precio}
-                      className="w-20 p-1 border rounded"
-                      onBlur={(e) =>
-                        actualizarProducto(p.id, "precio", Number(e.target.value))
+                      value={
+                        editValues[p.id]?.precio !== undefined
+                          ? editValues[p.id].precio
+                          : p.precio
                       }
+                      className="w-24 p-1 border rounded"
+                      onChange={(e) =>
+                        handleEditChange(p.id, "precio", e.target.value)
+                      }
+                      onBlur={() => handleEditBlur(p.id, "precio")}
                     />
                   </td>
                   <td className="p-2">
                     <input
                       type="number"
-                      defaultValue={p.stock}
-                      className="w-16 p-1 border rounded"
-                      onBlur={(e) =>
-                        actualizarProducto(p.id, "stock", Number(e.target.value))
+                      value={
+                        editValues[p.id]?.stock !== undefined
+                          ? editValues[p.id].stock
+                          : p.stock
                       }
+                      className="w-16 p-1 border rounded"
+                      onChange={(e) =>
+                        handleEditChange(p.id, "stock", e.target.value)
+                      }
+                      onBlur={() => handleEditBlur(p.id, "stock")}
                     />
                   </td>
                   <td className="p-2">

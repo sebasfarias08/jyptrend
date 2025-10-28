@@ -22,6 +22,7 @@ export default function ProductForm({ onClose, reload }) {
   });
 
   const [imagen, setImagen] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -31,7 +32,8 @@ export default function ProductForm({ onClose, reload }) {
     if (!imagen || !form.categoria) return null;
 
     const fileExt = imagen.name.split(".").pop();
-    const fileName = `${form.nombre.replace(/ /g, "_")}_${Date.now()}.${fileExt}`;
+    const safeName = form.nombre.replace(/[^a-zA-Z0-9]/g, "_");
+    const fileName = `${safeName}_${Date.now()}.${fileExt}`;
     const filePath = `${form.categoria.toLowerCase()}/${fileName}`;
 
     const { error } = await supabase.storage
@@ -48,25 +50,37 @@ export default function ProductForm({ onClose, reload }) {
   };
 
   const guardarProducto = async () => {
-    const imagePath = await subirImagen();
+    setLoading(true);
+    try {
+      const imagePath = await subirImagen();
 
-    const { error } = await supabase.from("productos").insert([
-      {
-        ...form,
-        activo: true,
-        imagen_path: imagePath,
-      },
-    ]);
+      if (!imagePath) {
+        alert("❌ Error al subir imagen. Debes seleccionar una imagen y categoría antes de guardar.");
+        setLoading(false);
+        return;
+      }
 
-    if (error) {
-      alert("❌ Error guardando producto");
-      console.error(error);
-      return;
+      const { error } = await supabase.from("productos").insert([
+        {
+          ...form,
+          activo: true,
+          imagen_path: imagePath,
+        },
+      ]);
+
+      if (error) {
+        alert("❌ Error guardando producto");
+        console.error(error);
+        setLoading(false);
+        return;
+      }
+
+      alert("✅ Producto agregado!");
+      reload();
+      onClose();
+    } finally {
+      setLoading(false);
     }
-
-    alert("✅ Producto agregado!");
-    reload();
-    onClose();
   };
 
   return (
@@ -150,8 +164,9 @@ export default function ProductForm({ onClose, reload }) {
       <button
         className="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700"
         onClick={guardarProducto}
+        disabled={loading}
       >
-        Guardar ✅
+        {loading ? "Guardando..." : "Guardar ✅"}
       </button>
     </div>
   );
