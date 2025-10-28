@@ -21,11 +21,7 @@ export default function ProductManager() {
   };
 
   const actualizarProducto = async (id, field, value) => {
-    await supabase
-      .from("productos")
-      .update({ [field]: value })
-      .eq("id", id);
-
+    await supabase.from("productos").update({ [field]: value }).eq("id", id);
     cargarProductos();
   };
 
@@ -37,7 +33,6 @@ export default function ProductManager() {
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">🛠️ Gestión de Productos</h2>
-
         <button
           className="bg-purple-600 text-white px-3 py-2 rounded text-sm hover:bg-purple-700"
           onClick={() => setShowForm(!showForm)}
@@ -47,10 +42,7 @@ export default function ProductManager() {
       </div>
 
       {showForm && (
-        <ProductForm
-          onClose={() => setShowForm(false)}
-          reload={cargarProductos}
-        />
+        <ProductForm onClose={() => setShowForm(false)} reload={cargarProductos} />
       )}
 
       <input
