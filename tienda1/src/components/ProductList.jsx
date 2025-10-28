@@ -1,62 +1,145 @@
-import React, { useEffect, useState } from 'react';
-import { useCart } from '../context/CartContext';
-import { supabase } from '../services/supabaseClient';
+import React, { useEffect, useState } from "react";
+import { supabase } from "../services/supabaseClient";
+import { useCart } from "../context/CartContext";
 
 export default function ProductList() {
   const { addToCart } = useCart();
+  const [loading, setLoading] = useState(true);
   const [productos, setProductos] = useState([]);
-  const imgSrc = p.imagen_path
-    ? supabase.storage.from('productos').getPublicUrl(p.imagen_path).publicURL
-    : p.imagen_url || "";
+  const [error, setError] = useState(null);
+  const [filtro, setFiltro] = useState("");
 
   useEffect(() => {
-    async function cargarProductos() {
-      const { data, error } = await supabase
-        .from('productos')
-        .select('*')
-        .eq('activo', true);
-
-      if (error) {
-        console.error('Error cargando productos:', error);
-        return;
+    const cargar = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const { data, error } = await supabase
+          .from("productos")
+          .select("*")
+          .eq("activo", true) // solo activos
+          .order("nombre", { ascending: true });
+        if (error) throw error;
+        setProductos(data || []);
+      } catch (err) {
+        console.error("❌ Error cargando productos:", err);
+        setError("No se pudieron cargar los productos.");
+      } finally {
+        setLoading(false);
       }
-
-      setProductos(data);
-    }
-
-    cargarProductos();
+    };
+    cargar();
   }, []);
 
-  if (!productos.length) {
-    return <p className="text-center text-gray-600 mt-10">Cargando productos...</p>;
+  const filtrar = (lista) => {
+    const q = (filtro || "").toLowerCase();
+    if (!q) return lista;
+    return lista.filter((item) =>
+      (item?.nombre || "").toLowerCase().includes(q)
+    );
+  };
+
+  const visibles = filtrar(productos);
+
+  if (loading) {
+    return <p className="p-4 text-gray-600">Cargando productos…</p>;
+  }
+  if (error) {
+    return <p className="p-4 text-red-600">{error}</p>;
   }
 
   return (
     <section className="mt-6">
-      <h2 className="text-2xl font-bold mb-4 text-left">Productos</h2>
+      <div className="flex items-center gap-2 mb-4">
+        <h2 className="text-2xl font-bold">Productos</h2>
+        <input
+          className="ml-auto border rounded px-2 py-1 text-sm"
+          placeholder="Buscar…"
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+        />
+      </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {productos.map((p) => (
-          <div
-            key={p.id}
-            className={`bg-white p-3 rounded-lg shadow text-center transition
-              ${p.stock <= 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-lg'}`}
-            onClick={() => p.stock > 0 && addToCart(p)}
-          >
-            <img
-              src={imgSrc}
-              alt={p.nombre}
-              className="w-full h-32 object-cover rounded mb-2 bg-gray-200"
-            />
-            <p className="text-gray-700 font-semibold">{p.nombre}</p>
-            <p className="text-blue-600 font-bold mt-1">${p.precio}</p>
+        {visibles.map((item) => {
+          // ⚠️ TODO ESTO ESTÁ DENTRO DEL MAP — NO MOVER FUERA
+          const imgSrc = item?.imagen_path
+            ? supabase
+                .storage
+                .from("productos")
+                .getPublicUrl(item.imagen_path).publicURL
+            : (item?.imagen_url || "");
 
-            {p.stock <= 0 && (
-              <p className="text-red-600 text-xs mt-1 font-semibold">Sin stock</p>
-            )}
-          </div>
-        ))}
+          const agotado = (item?.stock ?? 0) <= 0;
+
+          return (
+            <article
+              key={item.id} // clave estable
+              className={`bg-white p-3 rounded-lg shadow transition ${
+                agotado ? "opacity-60" : "hover:shadow-lg"
+              }`}
+            >
+              <div className="w-full h-32 bg-gray-100 rounded mb-2 overflow-hidden">
+                {imgSrc ? (
+                  <img
+                    src={imgSrc}
+                    alt={item?.nombre || "Producto"}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="w-full h-full grid place-items-center text-xs text-gray-400">
+                    Sin imagen
+                  </div>
+                )}
+              </div>
+
+              <h3 className="text-gray-800 font-semibold line-clamp-2 min-h-10">
+                {item?.nombre || "Producto"}
+              </h3>
+
+              <div className="mt-1 text-sm text-gray-600">
+                {item?.marca && <span>{item.marca} · </span>}
+                {item?.tamano && <span>{item.tamano}</span>}
+              </div>
+
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-blue-600 font-bold">
+                  ${Number(item?.precio ?? 0).toLocaleString("es-AR")}
+                </span>
+                <span className="text-xs text-gray-500">
+                  Stock: {Number(item?.stock ?? 0)}
+                </span>
+              </div>
+
+              <button
+                className={`mt-3 w-full rounded-lg font-semibold py-2 ${
+                  agotado
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
+                }`}
+                disabled={agotado}
+                onClick={() =>
+                  addToCart({
+                    id: item.id,
+                    nombre: item.nombre,
+                    precio: item.precio,
+                    stock: item.stock,
+                    imagen_path: item.imagen_path,
+                    imagen_url: item.imagen_url,
+                  })
+                }
+              >
+                {agotado ? "Sin stock" : "Agregar al carrito"}
+              </button>
+            </article>
+          );
+        })}
       </div>
+
+      {visibles.length === 0 && (
+        <p className="text-center text-gray-500 mt-6">No hay resultados.</p>
+      )}
     </section>
   );
 }
