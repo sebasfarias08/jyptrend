@@ -13,7 +13,9 @@ export default function ProductList({ categoria }) {
       let query = supabase.from("productos").select("*").eq("activo", true);
 
       // ✅ Filtrado dinámico por categoría
-      if (categoria) query = query.eq("categoria", categoria);
+      if (categoria) {
+        query = query.ilike("categoria", `%${categoria}%`);
+      }
 
       const { data, error } = await query.order("nombre", { ascending: true });
 
