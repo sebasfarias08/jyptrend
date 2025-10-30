@@ -22,9 +22,8 @@ export default function Header({ setView }) {
         onClick={() => setView("carrito")}
       >
         🛒
-        <span>Carrito Compras</span>
         {items > 0 && (
-          <span className="absolute -top-2 -right-2 bg-[#F1F1F1] text-xs text-[#00796B] font-bold rounded-full px-1">
+          <span className="absolute -top-2 -right-2 bg-[#F1F1F1] text-xs text-[#FF7A00] font-bold rounded-full px-1">
             {items}
           </span>
         )}

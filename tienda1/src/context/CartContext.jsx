@@ -24,6 +24,7 @@ export function CartProvider({ children }) {
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }
 
+// Custom hook to access the cart context throughout the app
 export function useCart() {
   return useContext(CartContext)
 }
