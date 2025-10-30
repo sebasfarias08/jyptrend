@@ -3,43 +3,32 @@ import { useAuth } from "./context/AuthContext";
 import Header from "./components/Header";
 import ProductList from "./components/ProductList";
 import Cart from "./components/Cart";
-import OrdersList from "./components/OrdersList";
-import Profile from "./components/Profile";
-import AdminPanel from "./components/AdminPanel";
-import ProductManager from "./components/ProductManager";
 import GoogleLoginButton from "./components/GoogleLoginButton";
+import BottomTabs from "./components/BottomTabs"; // ✅ NUEVO
 
 export default function App() {
   const [view, setView] = useState("tienda");
-  const { user, rol } = useAuth();
+  const [categoria, setCategoria] = useState("perfumes"); // ✅ categoría por defecto
+  const { user } = useAuth();
 
   if (!user) {
-    return (
-      <div className="min-h-screen bg-slate-100 flex justify-center items-center">
-        <GoogleLoginButton />
-      </div>
-    );
+    return <GoogleLoginButton />; // Si no hay usuario, mostramos login
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 pb-16"> 
+      {/* pb-16 deja espacio para la barra inferior */}
       <Header setView={setView} />
 
-      <main className="p-4">
-        {view === "tienda" && <ProductList />}
+      <main className="p-2">
+        {view === "tienda" && <ProductList categoria={categoria} />}
         {view === "carrito" && <Cart />}
-        {view === "pedidos" && <OrdersList />}
-        {view === "perfil" && <Profile />}
-
-        {/* ✅ Estas dos requieren permisos admin */}
-        {view === "admin" && rol === "admin" && (
-          <AdminPanel setView={setView} />
-        )}
-
-        {view === "productos" && rol === "admin" && (
-          <ProductManager />
-        )}
       </main>
+
+      {/* ✅ Barra inferior solo visible en vista tienda */}
+      {view === "tienda" && (
+        <BottomTabs categoria={categoria} setCategoria={setCategoria} />
+      )}
     </div>
   );
 }

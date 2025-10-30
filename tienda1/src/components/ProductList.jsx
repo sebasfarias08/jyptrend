@@ -2,34 +2,27 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
 import { useCart } from "../context/CartContext";
 
-export default function ProductList() {
+export default function ProductList({ categoria }) {
   const { addToCart } = useCart();
-  const [loading, setLoading] = useState(true);
   const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filtro, setFiltro] = useState("");
 
   useEffect(() => {
     const cargar = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const { data, error } = await supabase
-          .from("productos")
-          .select("*")
-          .eq("activo", true) // solo activos
-          .order("nombre", { ascending: true });
-        if (error) throw error;
-        setProductos(data || []);
-      } catch (err) {
-        console.error("❌ Error cargando productos:", err);
-        setError("No se pudieron cargar los productos.");
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("productos")
+        .select("*")
+        .eq("activo", true)
+        .eq("categoria", categoria) // ✅ filtro por categoría
+        .order("nombre", { ascending: true });
+      if (!error) setProductos(data);
+      setLoading(false);
     };
     cargar();
-  }, []);
+  }, [categoria]); // ✅ se recarga al cambiar categoría
 
   const filtrar = (lista) => {
     const q = (filtro || "").toLowerCase();
