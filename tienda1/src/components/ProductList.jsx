@@ -10,8 +10,12 @@ export default function ProductList({ categoria }) {
   useEffect(() => {
     const cargarProductos = async () => {
       setLoading(true);
-      let query = supabase.from("productos").select("*").eq("activo", true);
-
+      let query = supabase
+        .from("productos")
+        .select("*")
+        // .gt("stock", 0)
+        .eq("activo", true);
+        
       // ✅ Filtrado dinámico por categoría
       if (categoria) {
         query = query.ilike("categoria", `%${categoria}%`);
@@ -40,7 +44,7 @@ export default function ProductList({ categoria }) {
       {productos.map((p) => {
         const imgSrc = p.imagen_path
           ? supabase.storage.from("productos").getPublicUrl(p.imagen_path).data
-              .publicUrl
+            .publicUrl
           : p.imagen_url || "";
 
         return (
@@ -48,11 +52,21 @@ export default function ProductList({ categoria }) {
             key={p.id}
             className="flex items-center bg-white rounded-lg shadow p-2"
           >
-            <img
-              src={imgSrc}
-              alt={p.nombre}
-              className="w-16 h-16 object-cover rounded"
-            />
+            <div className="relative">
+              <img
+                src={imgSrc}
+                alt={p.nombre}
+                className="w-16 h-16 object-cover rounded"
+              />
+              <span
+                className={`absolute top right-3 text-[10px] font-semibold px-1.5 py-0.5 rounded ${p.stock > 0
+                    ? "bg-green-500 text-white"
+                    : "bg-red-500 text-white"
+                  }`}
+              >
+                {p.stock > 0 ? `${p.stock}` : "Agotado"}
+              </span>
+            </div>
 
             <div className="flex-1 px-3">
               <h3 className="text-sm font-semibold">{p.nombre}</h3>
