@@ -15,7 +15,7 @@ export default function ProductList({ categoria }) {
         .select("*")
         // .gt("stock", 0)
         .eq("activo", true);
-        
+
       // ✅ Filtrado dinámico por categoría
       if (categoria) {
         query = query.ilike("categoria", `%${categoria}%`);
@@ -59,7 +59,7 @@ export default function ProductList({ categoria }) {
                 className="w-16 h-16 object-cover rounded"
               />
               <span
-                className={`absolute top right-3 text-[10px] font-semibold px-1.5 py-0.5 rounded ${p.stock > 0
+                className={`absolute bottom-1 right-1 text-[10px] font-semibold px-1.5 py-0.5 rounded ${p.stock > 0
                     ? "bg-green-500 text-white"
                     : "bg-red-500 text-white"
                   }`}
