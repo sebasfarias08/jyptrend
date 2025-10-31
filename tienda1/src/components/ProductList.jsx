@@ -100,7 +100,7 @@ export default function ProductList({ categoria }) {
         return (
           <div
             key={p.id}
-            onClick={() => setProductoSeleccionado(p)}
+            onClick={() => onSelectProduct(p)}
             className="relative bg-white rounded-lg shadow p-2 hover:shadow-lg transition cursor-pointer flex items-center"
           >
             <div className="relative w-16 h-16 shrink-0">
