@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
 import { useCart } from "../context/CartContext";
 
-export default function ProductGrid({ search }) {
+export default function ProductGrid({ search, onSelectProduct }) {
   const { addToCart } = useCart();
   const [productos, setProductos] = useState([]);
 
@@ -23,7 +23,11 @@ export default function ProductGrid({ search }) {
           ? `https://vbafwbityuxbpnunfvej.supabase.co/storage/v1/object/public/${p.imagen_path}`
           : p.imagen_url || "";
         return (
-          <div key={p.id} className="bg-white rounded-2xl shadow-md overflow-hidden relative">
+          <div 
+            key={p.id}
+            className="bg-white rounded-2xl shadow-md overflow-hidden relative cursor-pointer"
+            onClick={() => onSelectProduct(p)}
+          >
             <img src={imgSrc} alt={p.nombre} className="w-full h-32 object-cover" />
             <div className="p-2">
               <h3 className="text-xs font-semibold text-gray-700 truncate">{p.nombre}</h3>
@@ -32,7 +36,10 @@ export default function ProductGrid({ search }) {
               </p>
             </div>
             <button
-              onClick={() => addToCart(p)}
+              onClick={(e) => {
+                e.stopPropagation(); // evita abrir detalle si solo quiero agregar
+                addToCart(p);
+              }}
               className="absolute bottom-2 right-2 bg-[#00796B] text-white w-7 h-7 rounded-full flex items-center justify-center shadow-md hover:bg-[#00695C]"
             >
               +
