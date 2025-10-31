@@ -17,10 +17,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
-      {/* ✅ Header visible solo si no estamos en el detalle */}
-      {view !== "detalle" && <HeaderCompact setView={setView} />}
-
-      <main className={`p-4 pt-${view === "detalle" ? "0" : "20"} max-w-md mx-auto`}>
+      {/* ✅ Header con animación de entrada/salida */}
+      <div className={`transition-all duration-300 ${view === "detalle" ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+        <HeaderCompact setView={setView} />
+      </div>
+      
+      <main className={`p-4 pt-${view === "detalle" ? "pt-0" : "pt-16"} max-w-md mx-auto transition-all duration-300`}>
         {view === "home" && (
           <>
             <SearchBar

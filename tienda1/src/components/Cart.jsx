@@ -41,7 +41,7 @@ export default function Cart() {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Mi Carrito</h2>
+      <h2 className="text-xl font-bold mb-4">Mi Venta</h2>
 
       {cart.map((p, index) => (
         <div
@@ -81,7 +81,7 @@ export default function Cart() {
         className="mt-4 w-full bg-green-600 text-white p-3 rounded-lg font-bold hover:bg-green-700"
         onClick={checkout}
       >
-        Finalizar compra ✅
+        Finalizar compra
       </button>
     </div>
   );

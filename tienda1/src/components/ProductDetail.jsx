@@ -19,7 +19,7 @@ export default function ProductDetail({ producto, onBack }) {
     : imagen_url || "";
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] flex flex-col relative">
+    <div className="min-h-screen bg-[#F9FAFB] flex flex-col animate-fadeSlide">
       {/* Imagen principal */}
       <div className="relative">
         <button
@@ -101,6 +101,22 @@ export default function ProductDetail({ producto, onBack }) {
           )}
         </button>
       </div>
+      {/* Animación fade + slide */}
+       <style>{`
+        @keyframes fadeSlide {
+          0% {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fadeSlide {
+          animation: fadeSlide 0.4s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
