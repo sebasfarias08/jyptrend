@@ -11,7 +11,7 @@ export default function ProductDetail({ producto, onBack }) {
     categoria,
     stock,
     imagen_path,
-    imagen_url
+    imagen_url,
   } = producto;
 
   const imgSrc = imagen_path
@@ -19,11 +19,12 @@ export default function ProductDetail({ producto, onBack }) {
     : imagen_url || "";
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] flex flex-col">
+    <div className="min-h-screen bg-[#F9FAFB] flex flex-col relative">
       {/* Imagen principal */}
       <div className="relative">
         <button
           onClick={onBack}
+          aria-label="Volver atrás"
           className="absolute top-3 left-3 bg-white rounded-full shadow-md w-8 h-8 flex items-center justify-center text-gray-700"
         >
           ←
@@ -31,7 +32,7 @@ export default function ProductDetail({ producto, onBack }) {
 
         <img
           src={imgSrc}
-          alt={nombre}
+          alt={`Imagen del producto ${nombre}`}
           className="w-full h-72 object-cover rounded-b-3xl"
         />
       </div>
@@ -39,12 +40,15 @@ export default function ProductDetail({ producto, onBack }) {
       {/* Contenido del producto */}
       <div className="flex-1 p-4 space-y-2">
         <h2 className="text-xl font-bold text-gray-800">{nombre}</h2>
+
         <p className="text-[#E53935] font-bold text-lg">
-          {precio?.toLocaleString("es-AR", {
-            style: "currency",
-            currency: "ARS",
-            minimumFractionDigits: 0,
-          })}
+          {precio
+            ? precio.toLocaleString("es-AR", {
+                style: "currency",
+                currency: "ARS",
+                minimumFractionDigits: 0,
+              })
+            : "Precio no disponible"}
         </p>
 
         <div className="flex items-center gap-1 text-yellow-500 text-sm">
@@ -70,14 +74,31 @@ export default function ProductDetail({ producto, onBack }) {
         </div>
       </div>
 
-      {/* Botón fijo inferior */}
-      <div className="p-4 bg-white shadow-inner">
+      {/* Botón tipo lengüeta inferior derecha */}
+      <div className="fixed bottom-0 right-0 p-0">
         <button
-          className="w-full bg-[#00796B] text-white font-semibold py-3 rounded-xl hover:bg-[#00695C] transition"
           onClick={() => addToCart(producto)}
           disabled={stock <= 0}
+          className={`
+            py-3 px-6
+            flex items-center gap-2
+            font-semibold text-white
+            bg-[#00796B]
+            rounded-tl-3xl
+            hover:bg-[#00695C]
+            transition-all
+            shadow-lg
+            disabled:opacity-60 disabled:cursor-not-allowed
+          `}
         >
-          {stock > 0 ? "🛒 Agregar al carrito" : "❌ Sin stock"}
+          {stock > 0 ? (
+            <>
+              <span className="text-lg">＋</span>
+              Agregar al carrito
+            </>
+          ) : (
+            "❌ Sin stock"
+          )}
         </button>
       </div>
     </div>
