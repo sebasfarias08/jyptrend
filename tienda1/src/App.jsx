@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useAuth } from "./context/AuthContext";
 import HeaderCompact from "./components/HeaderCompact";
 import SearchBar from "./components/SearchBar";
@@ -17,11 +17,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
-      {/* Header */}
-      <HeaderCompact setView={setView} />
+      {/* ✅ Header visible solo si no estamos en el detalle */}
+      {view !== "detalle" && <HeaderCompact setView={setView} />}
 
-      {/* Contenido */}
-      <main className="p-4 pt-20 max-w-md mx-auto">
+      <main className={`p-4 pt-${view === "detalle" ? "0" : "20"} max-w-md mx-auto`}>
         {view === "home" && (
           <>
             <SearchBar
@@ -38,6 +37,7 @@ export default function App() {
             />
           </>
         )}
+
         {view === "detalle" && productoSeleccionado && (
           <ProductDetail
             producto={productoSeleccionado}
@@ -46,7 +46,6 @@ export default function App() {
         )}
 
         {view === "carrito" && <Cart />}
-        
       </main>
     </div>
   );
