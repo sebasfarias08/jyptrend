@@ -17,8 +17,6 @@ git push origin main
 echo "🤖 Compilando versión Android..."
 cd tienda1
 npm run build:android
-npm run cap:copy
-npm run cap:sync
 npm run apk:debug
 
 echo "✅ Compilación completa. APK generado en:"

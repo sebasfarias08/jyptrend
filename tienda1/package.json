@@ -3,15 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build:web": "vite build",
-    "build:android": "vite build --mode android",
-    "cap:copy": "npx cap copy",
-    "cap:sync": "npx cap sync",
-    "apk:debug": "cd android && gradlew.bat assembleDebug",
-    "lint": "eslint .",
-    "preview": "vite preview"
+ "scripts": {
+  "dev": "vite",
+  "build:web": "vite build",
+  "build:android": "vite build && npx cap copy android && npx cap sync android",
+  "cap:copy": "npx cap copy",
+  "cap:sync": "npx cap sync",
+  "apk:debug": "cd android && gradlew.bat assembleDebug",
+  "lint": "eslint .",
+  "preview": "vite preview"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.4",
