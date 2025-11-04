@@ -1,36 +1,65 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function GoogleLoginButton() {
   const buttonRef = useRef(null);
   const { login } = useAuth();
+  const [estado, setEstado] = useState("Inicializando...");
 
   useEffect(() => {
+    let intentos = 0;
+
     const initGoogle = () => {
+      intentos += 1;
+
       if (typeof google === "undefined" || !google.accounts?.id) {
-        console.log("Google API todavía no disponible, reintentando...");
-        setTimeout(initGoogle, 300);
+        setEstado(`Esperando SDK de Google... intento ${intentos}`);
+        // Después de varios intentos, marcamos error visible
+        if (intentos > 10) {
+          setEstado("❌ No se pudo cargar Google Identity en este entorno.");
+          return;
+        }
+        setTimeout(initGoogle, 400);
         return;
       }
 
-      google.accounts.id.initialize({
-        client_id:
-          "799514085909-f2b0mh1oprkvc12k67oporpujp4ivn95.apps.googleusercontent.com",
-        callback: (response) => {
-          const payload = JSON.parse(atob(response.credential.split(".")[1]));
-          login({
-            nombre: payload.name,
-            email: payload.email,
-            picture: payload.picture,
-          });
-        },
-      });
+      try {
+        setEstado("SDK detectado, inicializando...");
 
-      google.accounts.id.renderButton(buttonRef.current, {
-        theme: "outline",
-        size: "large",
-        width: 300,
-      });
+        google.accounts.id.initialize({
+          client_id:
+            "799514085909-f2b0mh1oprkvc12k67oporpujp4ivn95.apps.googleusercontent.com",
+          callback: (response) => {
+            try {
+              const payload = JSON.parse(
+                atob(response.credential.split(".")[1])
+              );
+              login({
+                nombre: payload.name,
+                email: payload.email,
+                picture: payload.picture,
+              });
+            } catch (err) {
+              console.error("Error parseando token de Google:", err);
+              setEstado("❌ Error procesando respuesta de Google.");
+            }
+          },
+        });
+
+        if (buttonRef.current) {
+          google.accounts.id.renderButton(buttonRef.current, {
+            theme: "outline",
+            size: "large",
+            width: 300,
+          });
+          setEstado("✅ Botón de Google inicializado.");
+        } else {
+          setEstado("❌ No se encontró el contenedor del botón.");
+        }
+      } catch (err) {
+        console.error("Error inicializando Google Identity:", err);
+        setEstado("❌ Error al inicializar Google Identity.");
+      }
     };
 
     initGoogle();
@@ -46,7 +75,11 @@ export default function GoogleLoginButton() {
           Iniciá sesión con tu cuenta de Google para continuar
         </p>
 
-        <div ref={buttonRef} className="flex justify-center"></div>
+        {/* Contenedor del botón oficial de Google */}
+        <div ref={buttonRef} className="flex justify-center mb-3" />
+
+        {/* Estado visible para debug, muy útil en APK */}
+        <p className="text-[11px] text-gray-500 mt-2">{estado}</p>
 
         <p className="text-gray-400 text-xs mt-6">
           © {new Date().getFullYear()} JYP Trend
