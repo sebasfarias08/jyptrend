@@ -5,11 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build:web": "vite build",
+    "build:android": "vite build --mode android",
+    "cap:copy": "npx cap copy",
+    "cap:sync": "npx cap sync",
+    "apk:debug": "cd android && gradlew.bat assembleDebug",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/cli": "^7.4.4",
+    "@capacitor/core": "^7.4.4",
     "@supabase/supabase-js": "^2.76.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
