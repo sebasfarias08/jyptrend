@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "936598998661",
+    "project_id": "jyptrend-29741",
+    "storage_bucket": "jyptrend-29741.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936598998661:android:15e403907dea47767923ec",
+        "android_client_info": {
+          "package_name": "com.jyptrend.tienda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPkSHZ52zv0rBiKIaUW_MFV5rGM4VbeWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

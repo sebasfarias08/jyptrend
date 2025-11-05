@@ -5,12 +5,8 @@
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-
-    <!-- 👇 Permitimos scripts desde Google -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">accounts.google.com</domain>
         <domain includeSubdomains="true">apis.google.com</domain>
-        <domain includeSubdomains="true">google.com</domain>
-        <domain includeSubdomains="true">gstatic.com</domain>
     </domain-config>
 </network-security-config>

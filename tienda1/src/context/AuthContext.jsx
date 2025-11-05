@@ -1,48 +1,48 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "../services/supabaseClient";
+import React, { createContext, useContext, useState } from "react";
+import { Capacitor } from "@capacitor/core";
+import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [rol, setRol] = useState("vendedor");
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      cargarRol(parsedUser.email);
-    }
-  }, []);
-
-  const cargarRol = async (email) => {
-    const { data, error } = await supabase
-      .from("usuarios_roles")
-      .select("rol")
-      .eq("email", email)
-      .single();
-
-    if (!error && data) {
-      setRol(data.rol);
+  const login = async () => {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        // ✅ Login en Android (Capacitor)
+        const result = await FirebaseAuthentication.signInWithGoogle();
+        setUser({
+          nombre: result.user.displayName,
+          email: result.user.email,
+          picture: result.user.photoUrl,
+        });
+      } else {
+        // ✅ Login Web normal
+        const client = google.accounts.id;
+        console.log("Google web client no implementado aquí (usa GoogleLoginButton)");
+      }
+    } catch (err) {
+      console.error("❌ Error de login:", err);
+      alert("Error al iniciar sesión");
     }
   };
 
-  const login = async (userData) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
-    cargarRol(userData.email);
-  };
-
-  const logout = () => {
-    setUser(null);
-    setRol("vendedor");
-    localStorage.removeItem("user");
-    window.location.reload();
+  const logout = async () => {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        await FirebaseAuthentication.signOut();
+      }
+      setUser(null);
+      localStorage.removeItem("user");
+      window.location.reload();
+    } catch (err) {
+      console.error("❌ Error al cerrar sesión:", err);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, rol, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
