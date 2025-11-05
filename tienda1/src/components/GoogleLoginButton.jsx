@@ -6,8 +6,9 @@ export default function GoogleLoginButton() {
   const { login } = useAuth();
   const buttonRef = useRef(null);
 
+  // --- WEB ---
   useEffect(() => {
-    if (Capacitor.isNativePlatform()) return; // No renderizamos botón en Android
+    if (Capacitor.getPlatform() !== "web") return;
 
     const initGoogle = () => {
       if (typeof google === "undefined" || !google.accounts?.id) {
@@ -16,7 +17,8 @@ export default function GoogleLoginButton() {
       }
 
       google.accounts.id.initialize({
-        client_id: "799514085909-f2b0mh1oprkvc12k67oporpujp4ivn95.apps.googleusercontent.com",
+        client_id:
+          "799514085909-f2b0mh1oprkvc12k67oporpujp4ivn95.apps.googleusercontent.com",
         callback: (response) => {
           const payload = JSON.parse(atob(response.credential.split(".")[1]));
           login({
@@ -24,7 +26,7 @@ export default function GoogleLoginButton() {
             email: payload.email,
             picture: payload.picture,
           });
-          window.location.reload(); // fuerza actualización del AuthContext → redirige al home
+          window.location.href = "/"; // redirige al home
         },
       });
 
@@ -37,6 +39,29 @@ export default function GoogleLoginButton() {
     initGoogle();
   }, [login]);
 
+  // --- ANDROID ---
+  const handleNativeLogin = async () => {
+    try {
+      const { FirebaseAuthentication } = await import(
+        "@capacitor-firebase/authentication"
+      );
+      const result = await FirebaseAuthentication.signInWithGoogle();
+      if (result?.user) {
+        login({
+          nombre: result.user.displayName,
+          email: result.user.email,
+          picture: result.user.photoUrl,
+        });
+        alert("Inicio de sesión correcto");
+      } else {
+        alert("No se pudo iniciar sesión");
+      }
+    } catch (error) {
+      console.error("❌ Error en login Android:", error);
+      alert("Error en login Android: " + error.message);
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-[#F9FAFB] text-center p-6">
       <h1 className="text-2xl font-bold text-[#00796B] mb-2">
@@ -46,23 +71,9 @@ export default function GoogleLoginButton() {
         Iniciá sesión con tu cuenta de Google para continuar
       </p>
 
-      {Capacitor.isNativePlatform() ? (
+      {Capacitor.getPlatform() === "android" ? (
         <button
-          onClick={async () => {
-            try {
-              const { FirebaseAuthentication } = await import("@capacitor-firebase/authentication");
-              const result = await FirebaseAuthentication.signInWithGoogle();
-              console.log("✅ Usuario:", result.user);
-              login({
-                nombre: result.user.displayName,
-                email: result.user.email,
-                picture: result.user.photoUrl,
-              });
-            } catch (error) {
-              console.error("❌ Error en login Android:", error);
-              alert("Error en login: " + error.message);
-            }
-          }}
+          onClick={handleNativeLogin}
           className="bg-[#00796B] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#00695C] transition"
         >
           Iniciar sesión con Google
@@ -71,9 +82,7 @@ export default function GoogleLoginButton() {
         <div ref={buttonRef}></div>
       )}
 
-      <footer className="text-xs text-gray-400 mt-8">
-        © 2025 JYP Trend
-      </footer>
+      <footer className="text-xs text-gray-400 mt-8">© 2025 JYP Trend</footer>
     </div>
   );
 }
