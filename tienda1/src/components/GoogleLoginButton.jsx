@@ -48,7 +48,21 @@ export default function GoogleLoginButton() {
 
       {Capacitor.isNativePlatform() ? (
         <button
-          onClick={login}
+          onClick={async () => {
+            try {
+              const { FirebaseAuthentication } = await import("@capacitor-firebase/authentication");
+              const result = await FirebaseAuthentication.signInWithGoogle();
+              console.log("✅ Usuario:", result.user);
+              login({
+                nombre: result.user.displayName,
+                email: result.user.email,
+                picture: result.user.photoUrl,
+              });
+            } catch (error) {
+              console.error("❌ Error en login Android:", error);
+              alert("Error en login: " + error.message);
+            }
+          }}
           className="bg-[#00796B] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#00695C] transition"
         >
           Iniciar sesión con Google
