@@ -16,8 +16,7 @@ export default function GoogleLoginButton() {
       }
 
       google.accounts.id.initialize({
-        client_id:
-          "799514085909-f2b0mh1oprkvc12k67oporpujp4ivn95.apps.googleusercontent.com",
+        client_id: "799514085909-f2b0mh1oprkvc12k67oporpujp4ivn95.apps.googleusercontent.com",
         callback: (response) => {
           const payload = JSON.parse(atob(response.credential.split(".")[1]));
           login({
@@ -25,6 +24,7 @@ export default function GoogleLoginButton() {
             email: payload.email,
             picture: payload.picture,
           });
+          window.location.reload(); // fuerza actualización del AuthContext → redirige al home
         },
       });
 
