@@ -28,7 +28,7 @@ export default function GoogleLoginButton() {
             email: payload.email,
             picture: payload.picture,
           });
-          window.location.href = "/Tienda"; // redirige al home
+          window.location.replace("/Tienda"); // redirige al home
         },
       });
 
@@ -44,6 +44,7 @@ export default function GoogleLoginButton() {
   // --- ANDROID ---
   const handleNativeLogin = async () => {
     try {
+      await FirebaseAuthentication.initialize();
       const result = await FirebaseAuthentication.signInWithGoogle();
       if (result?.user) {
         login({
@@ -51,7 +52,7 @@ export default function GoogleLoginButton() {
           email: result.user.email,
           picture: result.user.photoUrl,
         });
-        alert("Inicio de sesión correcto");
+        window.location.replace("/Tienda");
       } else {
         alert("No se pudo iniciar sesión");
       }
