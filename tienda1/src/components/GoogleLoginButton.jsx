@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import { useAuth } from "../context/AuthContext";
 import { Capacitor } from "@capacitor/core";
+import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
+import { useAuth } from "../context/AuthContext";
+
 
 export default function GoogleLoginButton() {
   const { login } = useAuth();
@@ -26,7 +28,7 @@ export default function GoogleLoginButton() {
             email: payload.email,
             picture: payload.picture,
           });
-          window.location.href = "/"; // redirige al home
+          window.location.href = "/Tienda"; // redirige al home
         },
       });
 
@@ -42,9 +44,6 @@ export default function GoogleLoginButton() {
   // --- ANDROID ---
   const handleNativeLogin = async () => {
     try {
-      const { FirebaseAuthentication } = await import(
-        "@capacitor-firebase/authentication"
-      );
       const result = await FirebaseAuthentication.signInWithGoogle();
       if (result?.user) {
         login({
@@ -58,7 +57,7 @@ export default function GoogleLoginButton() {
       }
     } catch (error) {
       console.error("❌ Error en login Android:", error);
-      alert("Error en login Android: " + error.message);
+      alert("Error en login: " + error.message);
     }
   };
 

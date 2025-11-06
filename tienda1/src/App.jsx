@@ -18,11 +18,14 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* ✅ Header con animación de entrada/salida */}
-      <div className={`transition-all duration-300 ${view === "detalle" ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+      <div className={`fixed top-0 left-0 right-0 z-10 transition-transform duration-300 ${view === "detalle" ? "-translate-y-full" : "translate-y-0"}`}>
         <HeaderCompact setView={setView} />
       </div>
-      
-      <main className={`p-4 pt-${view === "detalle" ? "pt-0" : "pt-16"} max-w-md mx-auto transition-all duration-300`}>
+
+      <main
+        className={`p-4 max-w-md mx-auto transition-all duration-300 ${view === "detalle" ? "pt-0" : "pt-16"
+          }`}
+      >
         {view === "home" && (
           <>
             <SearchBar
@@ -43,11 +46,14 @@ export default function App() {
         {view === "detalle" && productoSeleccionado && (
           <ProductDetail
             producto={productoSeleccionado}
-            onBack={() => setView("home")}
+            onBack={() => {
+              setProductoSeleccionado(null);
+              setView("home");
+            }}
           />
         )}
 
-        {view === "carrito" && <Cart />}
+        {view === "carrito" && <Cart setView={setView} />}
       </main>
     </div>
   );
